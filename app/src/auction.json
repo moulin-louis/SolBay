@@ -1,0 +1,193 @@
+{
+  "version": "0.1.0",
+  "name": "auction",
+  "instructions": [
+    {
+      "name": "initialize",
+      "accounts": [
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "newAuction",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "auctionInfo",
+          "type": {
+            "defined": "AuctionInfo"
+          }
+        }
+      ]
+    },
+    {
+      "name": "bide",
+      "accounts": [
+        {
+          "name": "user",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "auction",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "bideInfo",
+          "type": {
+            "defined": "BideInfo"
+          }
+        }
+      ]
+    },
+    {
+      "name": "endAuction",
+      "accounts": [
+        {
+          "name": "user",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "auction",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "closeAccount",
+      "accounts": [
+        {
+          "name": "auctionAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "receiver",
+          "isMut": true,
+          "isSigner": true
+        }
+      ],
+      "args": []
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Auction",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "auctionInfo",
+            "docs": [
+              "Actual Info for the auction"
+            ],
+            "type": {
+              "defined": "AuctionInfo"
+            }
+          },
+          {
+            "name": "bideInfo",
+            "type": {
+              "defined": "BideInfo"
+            }
+          },
+          {
+            "name": "endState",
+            "type": "bool"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "receiver",
+            "type": "publicKey"
+          }
+        ]
+      }
+    }
+  ],
+  "types": [
+    {
+      "name": "AuctionInfo",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "minPrice",
+            "type": "u64"
+          },
+          {
+            "name": "idAuction",
+            "type": "u32"
+          }
+        ]
+      }
+    },
+    {
+      "name": "BideInfo",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "price",
+            "type": "u64"
+          },
+          {
+            "name": "bidder",
+            "type": "publicKey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "BideError",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "PriceTooLow"
+          },
+          {
+            "name": "SameBidder"
+          },
+          {
+            "name": "AuctionEnded"
+          }
+        ]
+      }
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "StringTooLong",
+      "msg": "The name string is too long"
+    },
+    {
+      "code": 6001,
+      "name": "EmptyString",
+      "msg": "The name string is empty"
+    }
+  ]
+}

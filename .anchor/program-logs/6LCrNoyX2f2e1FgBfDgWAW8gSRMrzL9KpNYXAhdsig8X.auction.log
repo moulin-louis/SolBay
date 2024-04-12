@@ -1,0 +1,61 @@
+Streaming transaction logs mentioning 6LCrNoyX2f2e1FgBfDgWAW8gSRMrzL9KpNYXAhdsig8X. Confirmed commitment
+Transaction executed in slot 6298:
+  Signature: 4jHP3Top4XWepJvBwvCoVtrGS51synPFJgdjGJZpyHavF1oBNqNBZXFqBXVQXcKjWMVyY1tAipmLSSpVshTRqA3G
+  Status: Ok
+  Log Messages:
+    Program 6LCrNoyX2f2e1FgBfDgWAW8gSRMrzL9KpNYXAhdsig8X invoke [1]
+    Program log: Instruction: Initialize
+    Program 11111111111111111111111111111111 invoke [2]
+    Program 11111111111111111111111111111111 success
+    Program log: In init fn
+    Program log: auction is now = Auction { auction_info: AuctionInfo { name: "NB", min_price: 100, id_auction: 42 }, bide_info: BideInfo { price: 0, bidder: 11111111111111111111111111111111 }, end_state: false, bump: 254, receiver: 5qTMaWBhKAkFsomZJjfawAHcWvU8xc2cE7EembVowZHB }
+    Program 6LCrNoyX2f2e1FgBfDgWAW8gSRMrzL9KpNYXAhdsig8X consumed 28464 of 200000 compute units
+    Program 6LCrNoyX2f2e1FgBfDgWAW8gSRMrzL9KpNYXAhdsig8X success
+Transaction executed in slot 6299:
+  Signature: 21onnSahr4nucGaNiiEFssYH8nEK9Zw4gjjYv87S1NqctpFVqwE11s9zDYx86FfeJDhCpBxMngdy67QFDmLzCzSu
+  Status: Ok
+  Log Messages:
+    Program 6LCrNoyX2f2e1FgBfDgWAW8gSRMrzL9KpNYXAhdsig8X invoke [1]
+    Program log: Instruction: Bide
+    Program log: In bide fn
+    Program log: auction is now = Auction { auction_info: AuctionInfo { name: "NB", min_price: 100, id_auction: 42 }, bide_info: BideInfo { price: 100, bidder: 5qTMaWBhKAkFsomZJjfawAHcWvU8xc2cE7EembVowZHB }, end_state: false, bump: 254, receiver: 5qTMaWBhKAkFsomZJjfawAHcWvU8xc2cE7EembVowZHB }
+    Program 6LCrNoyX2f2e1FgBfDgWAW8gSRMrzL9KpNYXAhdsig8X consumed 30003 of 200000 compute units
+    Program 6LCrNoyX2f2e1FgBfDgWAW8gSRMrzL9KpNYXAhdsig8X success
+Transaction executed in slot 6300:
+  Signature: 3oN4VNLaMAMihcmJ6vVsrUCjvp2ZGzKoS2SChNskGWskEXn9CkHmw6hKxfUcmXJkyxVfaVPhQH3SejVCmi1xBfeH
+  Status: Ok
+  Log Messages:
+    Program 6LCrNoyX2f2e1FgBfDgWAW8gSRMrzL9KpNYXAhdsig8X invoke [1]
+    Program log: Instruction: Bide
+    Program log: In bide fn
+    Program log: auction is now = Auction { auction_info: AuctionInfo { name: "NB", min_price: 100, id_auction: 42 }, bide_info: BideInfo { price: 150, bidder: Cde6RevQRAPjhD5EYcAMeJ1TUvJ89fNFVoAgYXYfC69q }, end_state: false, bump: 254, receiver: 5qTMaWBhKAkFsomZJjfawAHcWvU8xc2cE7EembVowZHB }
+    Program 6LCrNoyX2f2e1FgBfDgWAW8gSRMrzL9KpNYXAhdsig8X consumed 30094 of 200000 compute units
+    Program 6LCrNoyX2f2e1FgBfDgWAW8gSRMrzL9KpNYXAhdsig8X success
+Transaction executed in slot 6301:
+  Signature: 2MQYL1TLR9Ff3bprBkz8JF5wEKd4wmDYUNwvrcmJ5UGvNeRc4ikEjaKdxigH4cVdk5xHm5zHvGRN1xVUQVjgiExj
+  Status: Ok
+  Log Messages:
+    Program 6LCrNoyX2f2e1FgBfDgWAW8gSRMrzL9KpNYXAhdsig8X invoke [1]
+    Program log: Instruction: Bide
+    Program log: In bide fn
+    Program log: auction is now = Auction { auction_info: AuctionInfo { name: "NB", min_price: 100, id_auction: 42 }, bide_info: BideInfo { price: 300, bidder: 5qTMaWBhKAkFsomZJjfawAHcWvU8xc2cE7EembVowZHB }, end_state: false, bump: 254, receiver: 5qTMaWBhKAkFsomZJjfawAHcWvU8xc2cE7EembVowZHB }
+    Program 6LCrNoyX2f2e1FgBfDgWAW8gSRMrzL9KpNYXAhdsig8X consumed 30003 of 200000 compute units
+    Program 6LCrNoyX2f2e1FgBfDgWAW8gSRMrzL9KpNYXAhdsig8X success
+Transaction executed in slot 6302:
+  Signature: 2aFwP1ge6vwqQCVhtKLGDAiheEmqfjRVBDwnLgKudK4Y6TxfzrzSSXYneBcEcGm441tPGDtWSj4QbZCTYDdfdj5z
+  Status: Ok
+  Log Messages:
+    Program 6LCrNoyX2f2e1FgBfDgWAW8gSRMrzL9KpNYXAhdsig8X invoke [1]
+    Program log: Instruction: EndAuction
+    Program log: In end auction fn
+    Program 6LCrNoyX2f2e1FgBfDgWAW8gSRMrzL9KpNYXAhdsig8X consumed 2224 of 200000 compute units
+    Program 6LCrNoyX2f2e1FgBfDgWAW8gSRMrzL9KpNYXAhdsig8X success
+Transaction executed in slot 6303:
+  Signature: 4PWhc5g7fhjcuC2uunPNpWKfMTgMFtbUqigQF6A7xtgmiTUbv5pzX2HXo5TCr3WuENypvvULvWXgZtq4DQhoCLmG
+  Status: Ok
+  Log Messages:
+    Program 6LCrNoyX2f2e1FgBfDgWAW8gSRMrzL9KpNYXAhdsig8X invoke [1]
+    Program log: Instruction: CloseAccount
+    Program log: In close account fn
+    Program 6LCrNoyX2f2e1FgBfDgWAW8gSRMrzL9KpNYXAhdsig8X consumed 2834 of 200000 compute units
+    Program 6LCrNoyX2f2e1FgBfDgWAW8gSRMrzL9KpNYXAhdsig8X success
