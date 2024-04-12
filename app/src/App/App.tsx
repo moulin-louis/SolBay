@@ -1,6 +1,6 @@
 import './App.css';
 import '@solana/wallet-adapter-react-ui/styles.css';
-import {FC, useMemo} from 'react'
+import {FC, useEffect, useMemo} from 'react'
 import {Routes, Route, Link} from "react-router-dom";
 import {Box, Flex, Link as ChakraLink, ChakraProvider} from '@chakra-ui/react';
 import {ConnectionProvider, useConnection, useWallet, WalletProvider} from '@solana/wallet-adapter-react';
@@ -9,23 +9,33 @@ import {
   WalletModalProvider,
   WalletMultiButton
 } from '@solana/wallet-adapter-react-ui';
-import {clusterApiUrl,} from '@solana/web3.js';
+import {clusterApiUrl} from '@solana/web3.js';
 import {Home} from "../Home/Home.tsx";
 import {BrowseAuction} from "../BrowseAuction/BrowseAuction.tsx";
 import {CreateAuction} from "../CreateAuction/CreateAuction.tsx";
 import {Profile} from "../Profile/Profile.tsx";
-import solbayLogo from '../utilities/solbay_logo.png'
-import {setProvider} from "@coral-xyz/anchor";
-import {AnchorProvider} from "@coral-xyz/anchor";
+import solbayLogo from '../assets/solbay_logo.png'
+import {getProvider, setProvider} from "@coral-xyz/anchor";
+import {AnchorProvider, Wallet as WalletAnchor} from "@coral-xyz/anchor";
 
 function Navigate() {
-  const wallet = useWallet();
+  const wallet_ctx = useWallet();
   const connectionContextState = useConnection();
   const anchor_provider = useMemo(() => {
-    const tmp = new AnchorProvider(connectionContextState.connection, wallet.wallet, {});
-    setProvider(tmp);
-    return tmp;
-  }, [connectionContextState.connection, wallet.wallet]);
+    if (!wallet_ctx.publicKey) return;
+    const anchorWallet: WalletAnchor = {
+      publicKey: wallet_ctx.publicKey,
+      signTransaction: wallet_ctx.signTransaction,
+      signAllTransactions: wallet_ctx.signAllTransactions,
+    };
+    return new AnchorProvider(connectionContextState.connection, anchorWallet, {});
+  }, [connectionContextState.connection, wallet_ctx.publicKey, wallet_ctx.signAllTransactions, wallet_ctx.signTransaction]);
+  useEffect(() => {
+    setProvider(anchor_provider as AnchorProvider); //change global anchor provider
+  }, [anchor_provider]);
+  if (anchor_provider === undefined) {
+    return <>Loading</>;
+  }
   return (
     <>
       <Link to="/">

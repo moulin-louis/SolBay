@@ -1,30 +1,12 @@
-import {Auctions, t_auction} from "../Auction/Auction.tsx";
-import {useWallet, WalletContextState} from "@solana/wallet-adapter-react";
+import {auctionsPDA, t_auction} from "../Auction/Auction.tsx";
+import {WalletContextState} from "@solana/wallet-adapter-react";
 import {PublicKey} from "@solana/web3.js";
 import {v4 as uuidv4} from 'uuid';
-import {BN, getProvider, Idl, Program} from "@coral-xyz/anchor";
+import {BN, getProvider, Idl, Program, Provider} from "@coral-xyz/anchor";
 import * as idl_program from '../auction.json';
+import {getAccountData, getFormattedDate} from "../Utils.tsx";
 
-const programId = '6LCrNoyX2f2e1FgBfDgWAW8gSRMrzL9KpNYXAhdsig8X' as string;
-
-const upload_to_ipfs = async (data: File) => {
-  console.log('data = ', data);
-  try {
-    const formData = new FormData();
-    formData.append('file', new Blob([data], {type: 'image/jpeg'}));
-    formData.append("pinataMetadata", JSON.stringify({name: "auction_image"}));
-    const api_jwt = import.meta.env.VITE_PINATA_JWT;
-    const res = await fetch(`https://api.pinata.cloud/pinning/pinFileToIPFS`, {
-      method: 'POST',
-      headers: {Authorization: `Bearer ${api_jwt}`},
-      body: formData,
-    });
-    return res.json();
-  } catch (error) {
-    console.log('error when uploading to ipfs', error);
-    throw error;
-  }
-}
+const programId: string = import.meta.env.VITE_PROGRAM_ID;
 
 export const return_empty = (): t_auction => {
   return {
@@ -41,17 +23,15 @@ export const return_empty = (): t_auction => {
     image_path: '',
     image_data: '',
     ipfs_hash: '',
-    end_date: '0',
+    end_date: getFormattedDate(),
   };
 }
 
-export const handle_emit = async (auction: t_auction, toast: any) => {
-  const wallet_context = useWallet();
+export const handle_emit = async (auction: t_auction, wallet_context: WalletContextState, toast: any) => {
   const pubKey = wallet_context.publicKey as PublicKey;
   auction.id = uuidv4();
   auction.seller = pubKey
   auction.created_at = Date.now();
-
   // const response_ipfs = await upload_to_ipfs(auction.image_data).catch((error) => {
   //   console.log("error when uploading to ipfs", error);
   //   return '';
@@ -67,27 +47,33 @@ export const handle_emit = async (auction: t_auction, toast: any) => {
   //   });
   //   return
   // }
-  const provider = getProvider();
-  const program = new Program(idl_program as Idl, programId, provider);
-  const auctionPDA = PublicKey.findProgramAddressSync(
-    [Buffer.from("counter"), pubKey.toBuffer()],
+  const provider: Provider = getProvider();
+  const program: Program = new Program(idl_program as Idl, programId, provider);
+  const userAuctionPDA: PublicKey = PublicKey.findProgramAddressSync(
+    [Buffer.from("auction"), pubKey.toBuffer()],
     program.programId,
   )[0];
-  console.log("auction PDA = ", auctionPDA.toString());
+  if (await getAccountData(program, userAuctionPDA) !== undefined) {
+    console.log("Auction already exists");
+
+    auctionsPDA.push(userAuctionPDA);
+    return;
+  }
+  console.log("auction PDA = ", userAuctionPDA.toString());
   const auction_info = {
     name: auction.name,
     minPrice: new BN(auction.min_price),
     idAuction: Number(auction.id),
   }
-  await program.methods
+  const tx = await program.methods
     .initialize(auction_info)
     .accounts({
       user: pubKey,
-      newAuction: auctionPDA,
+      newAuction: userAuctionPDA,
     })
     .rpc({skipPreflight: true});
+  console.log("tx = ", tx);
   // auction.ipfs_hash = response_ipfs.IpfsHash;
-  Auctions.push(auction);
   toast({
     title: "Auction created",
     description: "Your auction has been created",

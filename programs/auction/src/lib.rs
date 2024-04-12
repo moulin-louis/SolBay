@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 use std::fmt::Debug;
 
-declare_id!("6LCrNoyX2f2e1FgBfDgWAW8gSRMrzL9KpNYXAhdsig8X");
+declare_id!("8fwi3RtHHKogVd2wwqttrrMSazL9vnkttUikD4CW9y2J");
 
 #[error_code]
 pub enum NameError {

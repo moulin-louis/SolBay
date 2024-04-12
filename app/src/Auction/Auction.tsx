@@ -1,7 +1,7 @@
 import {PublicKey} from "@solana/web3.js";
 import {t_token} from "../CreateAuction/FetchToken.tsx";
 
-export const Auctions: t_auction[] = []
+export const auctionsPDA: PublicKey[]= [];
 
 export interface t_auction {
   id: string; //uid of the auction

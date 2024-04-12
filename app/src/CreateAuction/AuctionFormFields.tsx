@@ -1,102 +1,93 @@
-// AuctionFormFields.jsx
-import React, {FC} from 'react';
-import {Field, FormikProps} from "formik";
-import {Box, FormControl, FormLabel} from '@chakra-ui/react';
+import {ChangeEvent} from 'react';
+import {Box, FormControl, FormHelperText, FormLabel, Input} from '@chakra-ui/react';
 import {ListToken} from "./ListToken.tsx";
-import {t_auction} from "../Auction/Auction";
 import {t_token} from "./FetchToken.tsx";
 
-interface AuctionFormFieldsProps extends FormikProps<t_auction> {
-  auction: t_auction;
-  setAuction: React.Dispatch<React.SetStateAction<t_auction>>;
-  setFile: React.Dispatch<React.SetStateAction<File | null>>,
-  tokens: t_token[];
-}
+export const AuctionFormFields = ({
+                                    auction,
+                                    setAuction,
+                                    setFile,
+                                    tokens
+                                  }) => {
 
-export const AuctionFormFields: FC<AuctionFormFieldsProps> = ({
-                                                                setFieldValue,
-                                                                errors,
-                                                                touched,
-                                                                auction,
-                                                                setAuction,
-                                                                setFile,
-                                                                tokens
-                                                              }) => {
   const handleSelectToken = (token: t_token) => {
     setAuction(prev => ({...prev, token: token}));
   };
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const {name, value} = e.target;
+    setAuction(prev => ({...prev, [name]: value}));
+    if (name === 'image_path' && e.target.files) {
+      setFile(e.target.files[0]);
+      auction.image_data = e.target.files[0];
+      auction.image_path = e.target.value;
+    }
+  };
   return (
     <>
-      <Field name="image_data">
-        {({form}) => (
-          <FormControl isRequired marginBottom="1.5rem">
-            <FormLabel>Image</FormLabel>
-            <input
-              id="image_data"
-              name="image_data"
-              type="file"
-              onChange={(event) => {
-                const file = event.currentTarget.files ? event.currentTarget.files[0] : null;
-                if (file)
-                  setFile(file); // Setting file to state for later use
-                setFieldValue("image_path", event.currentTarget.value); // Keeping this in case you need the path in the form
-              }}
-            />
-          </FormControl>
-        )}
-      </Field>
-
-      <Field name="name" isRequired>
-        {({field}) => (
-          <FormControl isRequired marginBottom="1.5rem">
-            <FormLabel>Name</FormLabel>
-            <input {...field} id="name" type="text"/>
-            {touched.name && errors.name ? (
-              <div>{errors.name}</div>
-            ) : null}
-          </FormControl>
-        )}
-      </Field>
-      <Field name="description">
-        {({field}) => (
-          <FormControl isRequired marginBottom="1.5rem">
-            <FormLabel>Description</FormLabel>
-            <input {...field} id="description" type="text"/>
-            {touched.description && errors.description ? (
-              <div>{errors.description}</div>
-            ) : null}
-          </FormControl>
-        )}
-      </Field>
+      <Box textAlign="center" marginBottom="1rem">
+        <h1>Create Auction</h1>
+      </Box>
+      <FormControl isRequired marginBottom="1.5rem">
+        <FormLabel>Image</FormLabel>
+        <Input
+          name="image_path"
+          value={auction.image_path}
+          onChange={handleChange}
+          type="file"
+          boxShadow="inset 2px 2px 5px #BABECC, inset -5px -5px 10px #FFF"
+        />
+      </FormControl>
+      <FormControl isRequired marginBottom="1.5rem">
+        <FormLabel>Auction Name</FormLabel>
+        <Input
+          name="name"
+          value={auction.name}
+          onChange={handleChange}
+          type="text"
+          boxShadow="inset 2px 2px 5px #BABECC, inset -5px -5px 10px #FFF"
+        />
+        <FormHelperText>Enter the name of your auction</FormHelperText>
+      </FormControl>
+      <FormControl isRequired marginBottom="1.5rem">
+        <FormLabel>Description</FormLabel>
+        <Input
+          name="description"
+          value={auction.description}
+          onChange={handleChange}
+          type="text"
+          boxShadow="inset 2px 2px 5px #BABECC, inset -5px -5px 10px #FFF"
+        />
+        <FormHelperText>Enter the description of your auction</FormHelperText>
+      </FormControl>
       {auction.token ? (
-        <Box marginBottom="1.5rem">You chose {auction.token.name}</Box>
+        <Box marginBottom="1.5rem">
+          You choose {auction.token.name}
+        </Box>
       ) : (
         <ListToken tokens={tokens} onSelectToken={handleSelectToken}/>
       )}
-      <Field name="min_price">
-        {({field}) => (
-          <FormControl isRequired marginBottom="1.5rem">
-            <FormLabel>Minimum Price</FormLabel>
-            <input {...field} id="min_price" type="number"/>
-            {touched.min_price && errors.min_price ? (
-              <div>{errors.min_price}</div>
-            ) : null}
-          </FormControl>
-        )}
-      </Field>
-      <Field name="end_date">
-        {({field}) => (
-          <FormControl isRequired marginBottom="1.5rem">
-            <FormLabel>End Date</FormLabel>
-            <input {...field} id="end_date" name="end_date" type="datetime-local"/>
-            {touched.end_date && errors.end_date ? (
-              <div>{errors.end_date}</div>
-            ) : null}
-          </FormControl>
-        )}
-      </Field>
+      <FormControl isRequired marginBottom="1.5rem">
+        <FormLabel>Minimun Price</FormLabel>
+        <Input
+          name="min_price"
+          value={auction.min_price}
+          onChange={handleChange}
+          type="number"
+          boxShadow="inset 2px 2px 5px #BABECC, inset -5px -5px 10px #FFF"
+        />
+        <FormHelperText>Price of the auction</FormHelperText>
+      </FormControl>
+      <FormControl isRequired marginBottom="1.5rem">
+        <FormLabel>End Date</FormLabel>
+        <Input
+          name="end_date"
+          value={auction.end_date}
+          onChange={handleChange}
+          type="datetime-local"
+          boxShadow="inset 2px 2px 5px #BABECC, inset -5px -5px 10px #FFF"
+        />
+        <FormHelperText>Submit Auction</FormHelperText>
+      </FormControl>
     </>
   );
 };
-
-export default AuctionFormFields;
