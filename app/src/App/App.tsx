@@ -104,11 +104,9 @@ export const Wallet: FC = () => {
 
 function App() {
   return (
-    <>
-      <ChakraProvider>
-        <Wallet/>
-      </ChakraProvider>
-    </>
+    <ChakraProvider>
+      <Wallet/>
+    </ChakraProvider>
   )
 }
 
