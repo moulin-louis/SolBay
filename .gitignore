@@ -29,6 +29,6 @@ node_modules
 .env
 ./app/.env
 .vercel
-./app/.nuxt
+app/.nuxt
 .vercel
-./app/.vercel
+app/.vercel
