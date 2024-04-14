@@ -13,7 +13,7 @@ const {
   <div v-if="pending">Loading...</div>
   <div v-else-if="error">Error fetching auctions: {{ error.message }}</div>
   <div v-else>
-    <!-- <UButton @click="refresh">Refresh</UButton> -->
+    <UButton @click="refresh">Refresh</UButton>
     <div>
       <div v-for="auction in auctions.body.data" :key="auction.id">
         <UCard>
