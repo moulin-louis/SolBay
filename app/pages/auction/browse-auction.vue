@@ -1,13 +1,13 @@
 <script setup lang="ts">
 
+const { data: result_auctions, refresh, pending, error } = await useFetch("/api/fetch-auctions", {
+  method: "POST",
+});
 </script>
 
 <template>
- <div>
-   Browse Auction Page
- </div>
+  <div>
+  </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

@@ -42,7 +42,7 @@ export default defineNuxtConfig({
       global: {Buffer},
     },
     optimizeDeps: {
-      include: ["@coral-xyz/anchor", "@solana/web3.js", "buffer"],
+      include: ["@coral-xyz/anchor", "@solana/web3.js", "buffer", "yup", ],
       esbuildOptions: {
         target: "esnext",
       },

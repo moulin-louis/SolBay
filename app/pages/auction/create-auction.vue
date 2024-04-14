@@ -1,17 +1,27 @@
 <script setup lang="ts">
-import {date, mixed, number, object, string} from "yup";
-import type {FormSubmitEvent} from "#ui/types";
+import { date, mixed, number, object, string } from "yup";
+import type { FormSubmitEvent } from "#ui/types";
+
 const toast = useToast();
 const schema = object({
   name: string().max(50, "Name must be less than 50 characters").required(),
   description: string().required(),
   price: number().required(),
   end_date: date()
-      .test("end_date", "End date must be in the future", value => value > new Date())
-      .required(), //Default to current date + 24h
+    .test(
+      "end_date",
+      "End date must be in the future",
+      (value) => value > new Date()
+    )
+    .required(), //Default to current date + 24h
   file: mixed()
-      .test("fileType", "Please provide a valid image file", value => !value || (value && ['image/jpeg', 'image/png'].includes(value.type)))
-      .required(),
+    .test(
+      "fileType",
+      "Please provide a valid image file",
+      (value) =>
+        !value || (value && ["image/jpeg", "image/png"].includes(value.type))
+    )
+    .required(),
 });
 
 const form = reactive({
@@ -20,20 +30,20 @@ const form = reactive({
   price: undefined,
   end_date: undefined,
   file: undefined,
-  file_path: undefined
+  file_path: undefined,
 });
 
 const isLoading = ref(false);
 const onSubmit = async (event: FormSubmitEvent<any>) => {
   isLoading.value = true;
   const auction = event.data as t_auction;
-  const {wallet} = useAnchor();
+  const { wallet } = useAnchor();
   auction.seller = wallet.publicKey.value;
   const ImageData = new FormData();
-  ImageData.append('file', form.file);
+  ImageData.append("file", form.file as unknown as string);
   form.file = undefined; // Clear the file
-  let answer = await $fetch('/api/upload-file-ipfs', {
-    method: 'POST',
+  let answer = await $fetch("/api/upload-file-ipfs", {
+    method: "POST",
     body: ImageData,
   });
   if (answer.status === 500) {
@@ -43,46 +53,85 @@ const onSubmit = async (event: FormSubmitEvent<any>) => {
   }
   const ipfs_answer = JSON.parse(answer.data);
   auction.ipfs_hash = ipfs_answer.IpfsHash;
-  answer = await $fetch('/api/create-auction', {
-    method: 'POST',
-    body: JSON.stringify(auction)
+  answer = await $fetch("/api/create-auction", {
+    method: "POST",
+    body: JSON.stringify(auction),
   });
+
   if (answer.status === 500) {
-    toast.error("An error occurred while creating the auction");
+    toast.add({
+      id: "error-notification",
+      title: "An error occurred while creating the auction",
+      description: answer.data,
+      icon: ""
+    });
     console.error(answer);
-  }
-  else {
-    toast.success("Auction created!");
+  } else {
+    toast.add({ id: "success-notification", title: "Auction Created !", icon: "i-material-symbols-check-circle-outline" });
     console.log("Auction created");
   }
   isLoading.value = false;
   await nextTick();
-}
+};
 const handleFileChange = (files: any) => {
   form.file = files[0];
-}
+};
 </script>
 
 <template>
   <div class="form-wrapper">
-    <UForm :schema="schema" :state="form" @submit="onSubmit" class="form-container">
+    <UForm
+      :schema="schema"
+      :state="form"
+      @submit="onSubmit"
+      class="form-container"
+    >
       <UFormGroup label="File" name="file" class="form-group">
-        <UInput type="file" @change="handleFileChange($event)" size="md" v-model="form.file_path"
-                placeholder="Upload a file" class="file-input"/>
+        <UInput
+          type="file"
+          @change="handleFileChange($event)"
+          size="md"
+          v-model="form.file_path"
+          placeholder="Upload a file"
+          class="file-input"
+        />
       </UFormGroup>
       <UFormGroup label="Name" name="name" class="form-group">
-        <UInput v-model="form.name" placeholder="Listing Name" class="text-input"/>
+        <UInput
+          v-model="form.name"
+          placeholder="Listing Name"
+          class="text-input"
+        />
       </UFormGroup>
       <UFormGroup label="Description" name="description" class="form-group">
-        <UInput v-model="form.description" placeholder="Listing description" class="text-input"/>
+        <UInput
+          v-model="form.description"
+          placeholder="Listing description"
+          class="text-input"
+        />
       </UFormGroup>
       <UFormGroup label="Price" name="price" class="form-group">
-        <UInput v-model="form.price" placeholder="Minimum price (in tokens)" class="text-input"/>
+        <UInput
+          v-model="form.price"
+          placeholder="Minimum price (in tokens)"
+          class="text-input"
+        />
       </UFormGroup>
       <UFormGroup label="End Date" name="end_date" class="form-group">
-        <UInput v-model="form.end_date" type="datetime-local" class="date-input"/>
+        <UInput
+          v-model="form.end_date"
+          type="datetime-local"
+          class="date-input"
+        />
       </UFormGroup>
-      <UButton type="submit" class="submit-button" :disabled="isLoading" :loading="isLoading">
+      <UButton
+        type="submit"
+        icon="i-heroicons-pencil-square"
+        color="black"
+        class="submit-button"
+        :disabled="isLoading"
+        :loading="isLoading"
+      >
         {{ isLoading ? "Loading..." : "Submit" }}
       </UButton>
     </UForm>
@@ -132,7 +181,7 @@ const handleFileChange = (files: any) => {
 
 .submit-button {
   padding: 0.625rem 1.875rem; /* padding adjusted to rem */
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   border: none;
   border-radius: 0.25rem;
