@@ -1,27 +1,10 @@
 <script setup lang="ts">
 import { date, mixed, number, object, string } from "yup";
-import { Keypair } from "@solana/web3.js";
-import type { FileUploadUploaderEvent } from "primevue/fileupload";
+import type { FormSubmitEvent } from "#ui/types";
 
-//All reactive stuff
-const isAuction = ref<boolean>(false);
-const isLoading = ref<boolean>(false);
-const file = ref<string | undefined>(undefined);
-const form = reactive({
-  id: undefined, //string
-  created_at: undefined, //string
-  name: undefined, //string
-  description: undefined, //string
-  seller: undefined, //PublicKey
-  ipfs_hash: undefined, //string
-  token: undefined, //t_token
-  price: undefined, //number
-});
+import { Keypair } from '@solana/web3.js'
 
-watch(file, (value) => {
-  console.log("file = ", value);
-});
-
+const toast = useToast();
 const schema = object({
   name: string().max(50, "Name must be less than 50 characters").required(),
   description: string().required(),
@@ -30,7 +13,7 @@ const schema = object({
     .test(
       "end_date",
       "End date must be in the future",
-      (value) => value && value > new Date()
+      (value) => value > new Date()
     )
     .required(), //Default to current date + 24h
   file: mixed()
@@ -43,105 +26,171 @@ const schema = object({
     .required(),
 });
 
-const onSubmit = async (event: Event) => {
-  event.preventDefault();
-  console.log("event = ", event);
-  console.log("form = ", form);
-  try {
-    schema.validateSync(form, { abortEarly: false, stripUnknown: true });
-  } catch (error) {
-    console.error("form validation failed", error);
+const form = reactive({
+  name: undefined,
+  description: undefined,
+  price: undefined,
+  end_date: undefined,
+  file: undefined,
+  file_path: undefined,
+});
+
+const isLoading = ref(false);
+const onSubmit = async (event: FormSubmitEvent<any>) => {
+  isLoading.value = true;
+  const auction = event.data as t_auction;
+  auction.seller = new Keypair().publicKey;
+  const ImageData = new FormData();
+  ImageData.append("file", form.file as unknown as string);
+  form.file = undefined; // Clear the file
+  let answer = await $fetch("/api/upload-file-ipfs", {
+    method: "POST",
+    body: ImageData,
+  });
+  if (answer.status === 500) {
+    console.error(answer);
+    isLoading.value = false;
     return;
   }
-  try {
-    isLoading.value = true;
-    const auction: t_listing = form as unknown as t_listing;
-    auction.seller = new Keypair().publicKey;
-    const ImageData = new FormData();
-    ImageData.append("file", file as unknown as string);
-    file.value = undefined; // Clear the file
-    let answer = await $fetch("/api/upload-file-ipfs", {
-      method: "POST",
-      body: ImageData,
-    });
-    auction.token = {};
-    if (answer.status === 500)
-      throw new Error("Error uploading image: " + answer.data);
-    const ipfs_answer = JSON.parse(answer.data);
-    auction.ipfs_hash = ipfs_answer.IpfsHash;
-    answer = await $fetch("/api/create-listing", {
-      method: "POST",
-      body: JSON.stringify(auction),
-    });
+  const ipfs_answer = JSON.parse(answer.data);
+  auction.ipfs_hash = ipfs_answer.IpfsHash;
+  answer = await $fetch("/api/create-auction", {
+    method: "POST",
+    body: JSON.stringify(auction),
+  });
 
-    if (answer.status === 500)
-      throw new Error("Error creating auction: " + answer.data);
+  if (answer.status === 500) {
+    toast.add({
+      id: "error-notification",
+      title: "An error occurred while creating the auction",
+      description: answer.data,
+      icon: ""
+    });
+    console.error(answer);
+  } else {
+    toast.add({ id: "success-notification", title: "Auction Created !", icon: "i-material-symbols-check-circle-outline" });
     console.log("Auction created");
-  } catch (error) {
-    console.error(error);
-  } finally {
-    isLoading.value = false;
   }
+  isLoading.value = false;
+  await nextTick();
 };
-
-const onUpload = (event: FileUploadUploaderEvent): void => {
-  console.log("event = ", event);
-  file.value = event.files;
-  console.log('event file = ', event.files)
-  console.log("file = ", file.value[0]);
-
+const handleFileChange = (files: any) => {
+  form.file = files[0];
 };
 </script>
 
 <template>
   <div class="form-wrapper">
-    <Divider />
-    <FileUpload
-      mode="basic"
-      name="image[]"
-      accept="image/*"
-      :max-file-size="1000000"
-      v-model="file"
-      custom-upload
-      auto
-      @uploader="onUpload"
-    />
-    <form @submit="onSubmit">
-      <InputGroup>
-        <div class="card flex justify-content-center">
-          <FloatLabel>
-            <InputText
-              id="name"
-              type="text"
-              v-model="form.name"
-              :invalid="form.s"
-            />
-            <label for="name">Name</label>
-          </FloatLabel>
-        </div>
-      </InputGroup>
-      <Divider />
-
-      <FloatLabel>
-        <InputText id="description" type="text" v-model="form.description" />
-        <label for="description">Description</label>
-      </FloatLabel>
-      <Divider />
-
-      <FloatLabel>
-        <InputNumber id="price" v-model="form.price" />
-        <label for="price">Price</label>
-      </FloatLabel>
-      <Divider />
-
-      <Button
+    <UForm
+      :schema="schema"
+      :state="form"
+      @submit="onSubmit"
+      class="form-container"
+    >
+      <UFormGroup label="File" name="file" class="form-group">
+        <UInput
+          type="file"
+          @change="handleFileChange($event)"
+          size="md"
+          v-model="form.file_path"
+          placeholder="Upload a file"
+          class="file-input"
+        />
+      </UFormGroup>
+      <UFormGroup label="Name" name="name" class="form-group">
+        <UInput
+          v-model="form.name"
+          placeholder="Listing Name"
+          class="text-input"
+        />
+      </UFormGroup>
+      <UFormGroup label="Description" name="description" class="form-group">
+        <UInput
+          v-model="form.description"
+          placeholder="Listing description"
+          class="text-input"
+        />
+      </UFormGroup>
+      <UFormGroup label="Price" name="price" class="form-group">
+        <UInput
+          v-model="form.price"
+          placeholder="Minimum price (in tokens)"
+          class="text-input"
+        />
+      </UFormGroup>
+      <UFormGroup label="End Date" name="end_date" class="form-group">
+        <UInput
+          v-model="form.end_date"
+          type="datetime-local"
+          class="date-input"
+        />
+      </UFormGroup>
+      <UButton
         type="submit"
+        icon="i-heroicons-pencil-square"
+        color="black"
+        class="submit-button"
+        :disabled="isLoading"
         :loading="isLoading"
-        label="Create Auction"
-        raised
-      />
-    </form>
+      >
+        {{ isLoading ? "Loading..." : "Submit" }}
+      </UButton>
+    </UForm>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.form-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f0f0f0;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  background: #ffffff;
+  box-shadow: 0 0.25rem 0.375rem rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 37.5rem; /* equivalent to 600px */
+}
+
+.form-group {
+  margin-bottom: 1.25rem; /* equivalent to 20px */
+  width: 100%;
+}
+
+.file-input,
+.text-input,
+.date-input {
+  width: 100%;
+  padding: 0.625rem 0.9375rem; /* padding adjusted to rem */
+  border: 0.0625rem solid #ccc; /* border-width to rem */
+  border-radius: 0.25rem;
+  transition: border-color 0.3s ease-in-out;
+}
+
+.file-input:hover,
+.text-input:hover,
+.date-input:hover {
+  border-color: #888;
+}
+
+.submit-button {
+  padding: 0.625rem 1.875rem; /* padding adjusted to rem */
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.submit-button:hover {
+  background-color: #45a049;
+}
+</style>

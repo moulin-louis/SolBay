@@ -1,17 +1,12 @@
 export { t_auction };
 
 declare global {
-  interface t_auction {
-    id: string; //uid of the auction
-    name: string; //name of the auction
-    description: string; //description of the auction
-    min_price: number; //price in chosen token
-    current_price: number; //current price in chosen token
-    seller: PublicKey; //address of the seller
-    betters: PublicKey[]; //vector of addresses of the betters
-    created_at: number; //timestamp
-    end_date: string; //timestamp
-    ipfs_hash: string; //hash of the image
-    token: t_token; //token struct
+  type t_auction  = t_listing & {
+    //Fill by the server
+    status: string; //status of the auction
+    bids: t_bid[]; //array of bids
+    current_price: number; //current price of the auction
+    //Fill by the client
+    end_date: string; //end date of the auction
   }
 }

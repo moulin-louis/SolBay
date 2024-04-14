@@ -9,8 +9,8 @@ import { SpeedInsights } from "@vercel/speed-insights/nuxt"
   <client-only placeholder="Loading....">
     <WalletMultiButton/>
   </client-only>
-  <Header/>
-  <slot/>
+  <Header />
+  <slot />
 </template>
 
 <style scoped>

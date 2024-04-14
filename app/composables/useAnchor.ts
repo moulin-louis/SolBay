@@ -4,13 +4,6 @@ import {Connection, clusterApiUrl, PublicKey} from '@solana/web3.js'
 import idl from '~/idl/auction.json'
 import {useWallet} from "solana-wallets-vue";
 
-export interface t_anchorCtx {
-  wallet: WalletStore;
-  connection: Connection;
-  provider: ComputedRef<AnchorProvider>;
-  program: ComputedRef<Program>;
-}
-
 export const useAnchor = (): t_anchorCtx => {
   const config = useRuntimeConfig();
   console.log("program = id =", config.public.PROGRAM_ID);

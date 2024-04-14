@@ -6,11 +6,11 @@ const links = [
   },
     {
       label: 'Browse Listings',
-      to: '/auction/browse-auction',
+      to: '/auction/browse-listing',
     },
     {
       label: 'Create Listing',
-      to: '/auction/create-auction',
+      to: '/auction/create-listing',
     }],
   [{
     label: 'Profile',

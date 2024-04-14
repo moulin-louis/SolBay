@@ -7,7 +7,6 @@ export default defineNuxtConfig({
   modules: [
     "@nuxt/ui",
     "@nuxt/fonts",
-    "@nuxtjs/tailwindcss",
     '@vueuse/nuxt',
     'nuxt-icon',
   ],
@@ -54,9 +53,6 @@ export default defineNuxtConfig({
       driver: 'fs',
       base: './data/db'
     },
-  },
-  alias: {
-    '@': resolve(__dirname, "/"),
   },
   image: {},
   runtimeConfig: {
