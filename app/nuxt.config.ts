@@ -1,7 +1,7 @@
-import { resolve } from 'path'
-import { Buffer } from 'buffer'
-import { inject } from 'vue'
-import * as process from 'process'
+import {resolve} from 'path';
+import {Buffer} from 'buffer';
+import {inject} from 'vue';
+import * as process from 'process';
 
 export default defineNuxtConfig({
   modules: [
@@ -27,17 +27,17 @@ export default defineNuxtConfig({
     build: {
       target: 'esnext',
       rollupOptions: {
-        plugins: [inject({ Buffer: ['buffer', 'Buffer'] })],
+        plugins: [inject({Buffer: ['buffer', 'Buffer']})],
       },
     },
-    plugins: [inject({ Buffer: ['buffer', 'Buffer'] })],
+    plugins: [inject({Buffer: ['buffer', 'Buffer']})],
     resolve: {
       alias: {
         buffer: 'buffer',
       },
     },
     define: {
-      global: { Buffer },
+      global: {Buffer},
     },
     optimizeDeps: {
       include: ['@coral-xyz/anchor', '@solana/web3.js', 'buffer', 'yup'],
@@ -71,4 +71,4 @@ export default defineNuxtConfig({
     includeWorkspace: true,
   },
   eslint: {},
-})
+});

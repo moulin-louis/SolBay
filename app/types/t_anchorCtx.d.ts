@@ -6,5 +6,5 @@ declare global {
     connection: Connection;
     provider: ComputedRef<AnchorProvider>;
     program: ComputedRef<Program>;
-  }
+  };
 }

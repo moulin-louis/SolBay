@@ -1,6 +1,6 @@
 export default defineEventHandler(async (event) => {
   try {
-    const storage = await useStorage("db");
+    const storage = await useStorage('db');
     const keys: string[] = await storage.getKeys();
     const items = [];
     for (const key of keys) {

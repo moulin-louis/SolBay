@@ -3,7 +3,7 @@ export const UploadToIpfs = async (data: File, api_jwt: string) => {
   try {
     const formData = new FormData();
     formData.append('file', new Blob([data], {type: 'image/jpeg'}));
-    formData.append("pinataMetadata", JSON.stringify({name: "auction_image"}));
+    formData.append('pinataMetadata', JSON.stringify({name: 'auction_image'}));
     const res = await fetch(`https://api.pinata.cloud/pinning/pinFileToIPFS`, {
       method: 'POST',
       headers: {Authorization: `Bearer ${api_jwt}`},
@@ -14,4 +14,4 @@ export const UploadToIpfs = async (data: File, api_jwt: string) => {
     console.log('error when uploading to ipfs', error);
     return null;
   }
-}
+};

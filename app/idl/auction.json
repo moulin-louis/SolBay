@@ -94,9 +94,7 @@
         "fields": [
           {
             "name": "auctionInfo",
-            "docs": [
-              "Actual Info for the auction"
-            ],
+            "docs": ["Actual Info for the auction"],
             "type": {
               "defined": "AuctionInfo"
             }

@@ -1,4 +1,4 @@
-export { t_token };
+export {t_token};
 
 declare global {
   type t_token = {
@@ -9,6 +9,6 @@ declare global {
     symbol: string;
     logoURI: string;
     tags: string[];
-    extensions: object,
-  }
+    extensions: object;
+  };
 }

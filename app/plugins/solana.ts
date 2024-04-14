@@ -1,9 +1,8 @@
-import "solana-wallets-vue/styles.css";
-import SolanaWallets from "solana-wallets-vue";
+import 'solana-wallets-vue/styles.css';
+import SolanaWallets from 'solana-wallets-vue';
 
 const walletOptions = {
-  wallets: [
-  ],
+  wallets: [],
   autoConnect: true,
 };
 

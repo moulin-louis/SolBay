@@ -6,7 +6,7 @@ const {
   error,
 } = await useFetch('/api/fetch-auctions', {
   method: 'POST',
-})
+});
 </script>
 
 <template>
