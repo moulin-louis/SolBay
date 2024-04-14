@@ -1,26 +1,29 @@
 <script setup lang="ts">
-const links: MenuI = [
-  {
-    label: "Home",
-    url: "/",
+const links = [
+  [{
+    label: 'Home',
+    to: '/',
   },
-  {
-    label: "Browse Listings",
-    url: "/auction/browse-auction",
+    {
+      label: 'Browse Listings',
+      to: '/auction/browse-auction',
+    },
+    {
+      label: 'Create Listing',
+      to: '/auction/create-auction',
+    }],
+  [{
+    label: 'Profile',
+    to: '/profile',
   },
-  {
-    label: "Create Listing",
-    url: "/auction/create-listing",
-  },
-  {
-    label: "Profile",
-    url: "/profile",
-  },
+  ]
 ];
 </script>
 
 <template>
-  <TabMenu :model="links" />
+  <UHorizontalNavigation :links="links" class="border-b border-gray-200 dark:border-gray-800"/>
 </template>
 
-<style scoped></style>
+<style scoped>
+
+</style>
