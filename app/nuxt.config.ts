@@ -1,49 +1,48 @@
-import {resolve} from "path";
-import {Buffer} from 'buffer';
-import {inject} from "vue";
-import * as process from "process";
+import { resolve } from 'path'
+import { Buffer } from 'buffer'
+import { inject } from 'vue'
+import * as process from 'process'
 
 export default defineNuxtConfig({
   modules: [
-    "@nuxt/ui",
-    "@nuxt/fonts",
+    '@nuxt/ui',
+    '@nuxt/fonts',
     '@vueuse/nuxt',
     'nuxt-icon',
+    '@nuxt/eslint',
   ],
   nitro: {
     // Development
     devStorage: {
       db: {
         driver: 'fs',
-        base: './data/db'
+        base: './data/db',
       },
     },
   },
   vite: {
     esbuild: {
-      target: "esnext",
+      target: 'esnext',
     },
     build: {
-      target: "esnext",
+      target: 'esnext',
       rollupOptions: {
-        plugins: [inject({Buffer: ['buffer', 'Buffer']})],
+        plugins: [inject({ Buffer: ['buffer', 'Buffer'] })],
       },
     },
-    plugins: [
-      inject({Buffer: ['buffer', 'Buffer']}),
-    ],
+    plugins: [inject({ Buffer: ['buffer', 'Buffer'] })],
     resolve: {
       alias: {
-        buffer: "buffer",
+        buffer: 'buffer',
       },
     },
     define: {
-      global: {Buffer},
+      global: { Buffer },
     },
     optimizeDeps: {
-      include: ["@coral-xyz/anchor", "@solana/web3.js", "buffer", "yup", ],
+      include: ['@coral-xyz/anchor', '@solana/web3.js', 'buffer', 'yup'],
       esbuildOptions: {
-        target: "esnext",
+        target: 'esnext',
       },
     },
   },
@@ -51,7 +50,7 @@ export default defineNuxtConfig({
   storage: {
     db: {
       driver: 'fs',
-      base: './data/db'
+      base: './data/db',
     },
   },
   image: {},
@@ -60,7 +59,7 @@ export default defineNuxtConfig({
     PROGRAM_ID: process.env.NUXT_PROGRAM_ID,
     public: {
       PROGRAM_ID: process.env.NUXT_PROGRAM_ID,
-    }
+    },
   },
   devtools: {
     timeline: {
@@ -69,7 +68,7 @@ export default defineNuxtConfig({
     enabled: true,
   },
   typescript: {
-    includeWorkspace: true
-  }
-
+    includeWorkspace: true,
+  },
+  eslint: {},
 })
