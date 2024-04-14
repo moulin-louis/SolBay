@@ -1,4 +1,4 @@
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event): Promise<t_listing[]> => {
   try {
     const storage = await useStorage("db");
     const keys: string[] = await storage.getKeys();

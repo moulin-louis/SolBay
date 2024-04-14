@@ -26,6 +26,7 @@
     "yup": "^1.4.0"
   },
   "devDependencies": {
+    "prettier": "^3.2.5",
     "@vue/runtime-core": "^3.4.21",
     "@vueuse/core": "^10.9.0",
     "@vueuse/nuxt": "^10.9.0",

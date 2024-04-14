@@ -2,7 +2,7 @@
 import { date, mixed, number, object, string } from "yup";
 import type { FormSubmitEvent } from "#ui/types";
 
-import { Keypair } from '@solana/web3.js'
+import { Keypair } from "@solana/web3.js";
 
 const toast = useToast();
 const schema = object({
@@ -38,8 +38,8 @@ const form = reactive({
 const isLoading = ref(false);
 const onSubmit = async (event: FormSubmitEvent<any>) => {
   isLoading.value = true;
-  const auction = event.data as t_auction;
-  auction.seller = new Keypair().publicKey;
+  const listing = event.data as t_listing;
+  listing.seller = new Keypair().publicKey;
   const ImageData = new FormData();
   ImageData.append("file", form.file as unknown as string);
   form.file = undefined; // Clear the file
@@ -53,23 +53,27 @@ const onSubmit = async (event: FormSubmitEvent<any>) => {
     return;
   }
   const ipfs_answer = JSON.parse(answer.data);
-  auction.ipfs_hash = ipfs_answer.IpfsHash;
-  answer = await $fetch("/api/create-auction", {
+  listing.ipfs_hash = ipfs_answer.IpfsHash;
+  answer = await $fetch("/api/create-listing", {
     method: "POST",
-    body: JSON.stringify(auction),
+    body: JSON.stringify(listing),
   });
 
   if (answer.status === 500) {
     toast.add({
       id: "error-notification",
-      title: "An error occurred while creating the auction",
+      title: "An error occurred while creating the listing",
       description: answer.data,
-      icon: ""
+      icon: "",
     });
     console.error(answer);
   } else {
-    toast.add({ id: "success-notification", title: "Auction Created !", icon: "i-material-symbols-check-circle-outline" });
-    console.log("Auction created");
+    toast.add({
+      id: "success-notification",
+      title: "Listing Created !",
+      icon: "i-material-symbols-check-circle-outline",
+    });
+    console.log("Listing created");
   }
   isLoading.value = false;
   await nextTick();

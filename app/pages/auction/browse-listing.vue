@@ -16,7 +16,7 @@ const {
     <!-- <UButton @click="refresh">Refresh</UButton> -->
     <div>
       <div v-for="auction in auctions.body.data" :key="auction.id">
-        <!-- <UCard>
+        <UCard>
           <template #header>
             <div>{{ auction.name }}</div>
           </template>
@@ -24,12 +24,13 @@ const {
           <div>{{ auction.price }}</div>
           <div>{{ auction.end_date }}</div>
           <template #footer>
-            <div>Footer</div>
+            <div>
+              <UButton> More Details </UButton>
+            </div>
           </template>
-        </UCard> -->
-        <div>
-          -------------
-        </div>
+        </UCard>
+        <div>-------------</div>
+        <div>-------------</div>
       </div>
     </div>
   </div>

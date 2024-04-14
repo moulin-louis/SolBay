@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
     const listing : t_listing = (await readBody(event)) as t_auction;
     listing.id = uuidv4();
     listing.created_at = new Date().toISOString();
-    if (checkEmptyFieldListing(listing))
+    if (checkEmptyFieldListing(listing) == false)
       throw new Error("Empty or undefined field found");
     await useStorage("db").setItem(listing.id.toString(), listing);
     return {

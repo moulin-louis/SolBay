@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
     auction.status = "open";
     auction.bids = [];
     auction.current_price = 0;
-    if (checkEmptyFieldListing(auction))
+    if (checkEmptyFieldListing(auction) == false)
       throw new Error("Empty or undefined field found");
     await useStorage("db").setItem(auction.id.toString(), auction);
     return {
