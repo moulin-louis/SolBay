@@ -13,6 +13,7 @@ export interface t_anchorCtx {
 
 export const useAnchor = (): t_anchorCtx => {
   const config = useRuntimeConfig();
+  console.log("program = id =", config.public.PROGRAM_ID);
   const programID: PublicKey = new PublicKey(config.public.PROGRAM_ID);
   const wallet: WalletStore = useWallet();
   const connection: Connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
