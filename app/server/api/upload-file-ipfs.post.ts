@@ -1,6 +1,12 @@
 import {UploadToIpfs} from "~/composables/UploadToIpfs";
 
-export default defineEventHandler(async (event) => {
+interface UploadToIpfsAnswer {
+  data: string;
+  status: number;
+}
+
+export default defineEventHandler(async (event):Promise<UploadToIpfsAnswer> => {
+  console.log("upload ipfs called");
   const {image} = await readBody(event);
   const config = useRuntimeConfig();
   const ipfs_answer = await UploadToIpfs(image, config.PINATA_JWT);

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { date, mixed, number, object, string } from "yup";
 import { Keypair } from "@solana/web3.js";
+import type { FileUploadUploaderEvent } from "primevue/fileupload";
 
 //All reactive stuff
 const isAuction = ref<boolean>(false);
@@ -15,6 +16,10 @@ const form = reactive({
   ipfs_hash: undefined, //string
   token: undefined, //t_token
   price: undefined, //number
+});
+
+watch(file, (value) => {
+  console.log("file = ", value);
 });
 
 const schema = object({
@@ -38,12 +43,12 @@ const schema = object({
     .required(),
 });
 
-const onSubmit = async (event: MouseEvent) => {
+const onSubmit = async (event: Event) => {
   event.preventDefault();
   console.log("event = ", event);
   console.log("form = ", form);
   try {
-    schema.validateSync(form, { abortEarly: false });
+    schema.validateSync(form, { abortEarly: false, stripUnknown: true });
   } catch (error) {
     console.error("form validation failed", error);
     return;
@@ -78,22 +83,42 @@ const onSubmit = async (event: MouseEvent) => {
     isLoading.value = false;
   }
 };
+
+const onUpload = (event: FileUploadUploaderEvent): void => {
+  console.log("event = ", event);
+  file.value = event.files;
+  console.log('event file = ', event.files)
+  console.log("file = ", file.value[0]);
+
+};
 </script>
 
 <template>
   <div class="form-wrapper">
-    <!-- <InputGroup> -->
-    <!-- <FileUpload mode="basic" name="image" accept="image/*" /> -->
-    <!-- </InputGroup> -->
-    <!-- <Divider /> -->
+    <Divider />
+    <FileUpload
+      mode="basic"
+      name="image[]"
+      accept="image/*"
+      :max-file-size="1000000"
+      v-model="file"
+      custom-upload
+      auto
+      @uploader="onUpload"
+    />
     <form @submit="onSubmit">
       <InputGroup>
-        <FloatLabel>
-          <div class="card flex justify-content-center">
-            <InputText id="name" type="text" v-model="form.name" :invalid=true />
-          </div>
-          <label for="name">Name</label>
-        </FloatLabel>
+        <div class="card flex justify-content-center">
+          <FloatLabel>
+            <InputText
+              id="name"
+              type="text"
+              v-model="form.name"
+              :invalid="form.s"
+            />
+            <label for="name">Name</label>
+          </FloatLabel>
+        </div>
       </InputGroup>
       <Divider />
 

@@ -53,9 +53,6 @@ export default defineNuxtConfig({
       base: "./data/db",
     },
   },
-  alias: {
-    "@": resolve(__dirname, "/"),
-  },
   runtimeConfig: {
     PINATA_JWT: process.env.NUXT_PINATA_JWT,
     PROGRAM_ID: process.env.NUXT_PROGRAM_ID,
@@ -79,5 +76,8 @@ export default defineNuxtConfig({
       inputStyle: "filled",
     },
   },
-  css: ['primevue/resources/themes/aura-light-green/theme.css', 'primevue/resources/primevue.min.css', 'primeicons/primeicons.css']
+  css: [
+    "primevue/resources/themes/aura-light-purple/theme.css",
+    "primeicons/primeicons.css",
+  ],
 });
