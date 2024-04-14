@@ -4,9 +4,9 @@ const {
   refresh,
   pending,
   error,
-} = await useFetch("/api/fetch-auctions", {
-  method: "POST",
-});
+} = await useFetch('/api/fetch-auctions', {
+  method: 'POST',
+})
 </script>
 
 <template>

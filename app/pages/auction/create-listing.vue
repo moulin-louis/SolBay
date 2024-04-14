@@ -1,30 +1,30 @@
 <script setup lang="ts">
-import { date, mixed, number, object, string } from "yup";
-import type { FormSubmitEvent } from "#ui/types";
+import { date, mixed, number, object, string } from 'yup'
+import type { FormSubmitEvent } from '#ui/types'
 
-import { Keypair } from "@solana/web3.js";
+import { Keypair } from '@solana/web3.js'
 
-const toast = useToast();
+const toast = useToast()
 const schema = object({
-  name: string().max(50, "Name must be less than 50 characters").required(),
+  name: string().max(50, 'Name must be less than 50 characters').required(),
   description: string().required(),
   price: number().required(),
   end_date: date()
     .test(
-      "end_date",
-      "End date must be in the future",
-      (value) => value > new Date()
+      'end_date',
+      'End date must be in the future',
+      (value) => value > new Date(),
     )
     .required(), //Default to current date + 24h
   file: mixed()
     .test(
-      "fileType",
-      "Please provide a valid image file",
+      'fileType',
+      'Please provide a valid image file',
       (value) =>
-        !value || (value && ["image/jpeg", "image/png"].includes(value.type))
+        !value || (value && ['image/jpeg', 'image/png'].includes(value.type)),
     )
     .required(),
-});
+})
 
 const form = reactive({
   name: undefined,
@@ -33,54 +33,54 @@ const form = reactive({
   end_date: undefined,
   file: undefined,
   file_path: undefined,
-});
+})
 
-const isLoading = ref(false);
+const isLoading = ref(false)
 const onSubmit = async (event: FormSubmitEvent<any>) => {
-  isLoading.value = true;
-  const listing = event.data as t_listing;
-  listing.seller = new Keypair().publicKey;
-  const ImageData = new FormData();
-  ImageData.append("file", form.file as unknown as string);
-  form.file = undefined; // Clear the file
-  let answer = await $fetch("/api/upload-file-ipfs", {
-    method: "POST",
+  isLoading.value = true
+  const listing = event.data as t_listing
+  listing.seller = new Keypair().publicKey
+  const ImageData = new FormData()
+  ImageData.append('file', form.file as unknown as string)
+  form.file = undefined // Clear the file
+  let answer = await $fetch('/api/upload-file-ipfs', {
+    method: 'POST',
     body: ImageData,
-  });
+  })
   if (answer.status === 500) {
-    console.error(answer);
-    isLoading.value = false;
-    return;
+    console.error(answer)
+    isLoading.value = false
+    return
   }
-  const ipfs_answer = JSON.parse(answer.data);
-  listing.ipfs_hash = ipfs_answer.IpfsHash;
-  answer = await $fetch("/api/create-listing", {
-    method: "POST",
+  const ipfs_answer = JSON.parse(answer.data)
+  listing.ipfs_hash = ipfs_answer.IpfsHash
+  answer = await $fetch('/api/create-listing', {
+    method: 'POST',
     body: JSON.stringify(listing),
-  });
+  })
 
   if (answer.status === 500) {
     toast.add({
-      id: "error-notification",
-      title: "An error occurred while creating the listing",
+      id: 'error-notification',
+      title: 'An error occurred while creating the listing',
       description: answer.data,
-      icon: "",
-    });
-    console.error(answer);
+      icon: '',
+    })
+    console.error(answer)
   } else {
     toast.add({
-      id: "success-notification",
-      title: "Listing Created !",
-      icon: "i-material-symbols-check-circle-outline",
-    });
-    console.log("Listing created");
+      id: 'success-notification',
+      title: 'Listing Created !',
+      icon: 'i-material-symbols-check-circle-outline',
+    })
+    console.log('Listing created')
   }
-  isLoading.value = false;
-  await nextTick();
-};
+  isLoading.value = false
+  await nextTick()
+}
 const handleFileChange = (files: any) => {
-  form.file = files[0];
-};
+  form.file = files[0]
+}
 </script>
 
 <template>
@@ -137,7 +137,7 @@ const handleFileChange = (files: any) => {
         :disabled="isLoading"
         :loading="isLoading"
       >
-        {{ isLoading ? "Loading..." : "Submit" }}
+        {{ isLoading ? 'Loading...' : 'Submit' }}
       </UButton>
     </UForm>
   </div>
