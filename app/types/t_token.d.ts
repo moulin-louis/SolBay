@@ -1,7 +1,7 @@
 export { t_token };
 
 declare global {
-  interface t_token {
+  type t_token = {
     address: string;
     chainId: number;
     decimals: number;
