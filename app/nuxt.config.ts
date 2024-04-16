@@ -32,9 +32,11 @@ export default defineNuxtConfig({
     PINATA_JWT: process.env.NUXT_PINATA_JWT,
     PROGRAM_ID: process.env.NUXT_PROGRAM_ID,
     RECIPIENT_PUBLIC_KEY: process.env.NUXT_RECIPIENT_PUBLIC_KEY,
+    SOLANA_DEVNET_RPC: process.env.NUXT_SOLANA_DEVNET_RPC,
     public: {
       PROGRAM_ID: process.env.NUXT_PROGRAM_ID,
       RECIPIENT_PUBLIC_KEY: process.env.NUXT_RECIPIENT_PUBLIC_KEY,
+      SOLANA_DEVNET_RPC: process.env.NUXT_SOLANA_DEVNET_RPC,
     },
   },
   devtools: {

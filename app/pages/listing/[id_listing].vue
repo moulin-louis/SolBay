@@ -7,6 +7,10 @@ import type QRCodeStyling from '@solana/qr-code-styling';
 
 const toast = useToast();
 const route = useRoute();
+const config = useRuntimeConfig();
+const recipient = new PublicKey(config.public.RECIPIENT_PUBLIC_KEY);
+const isBuying = ref(false);
+const statusBuy = ref('');
 const {
   data: listing,
   pending,
@@ -15,41 +19,39 @@ const {
   method: 'POST',
   body: JSON.stringify({id: route.params.id_listing}),
 });
-const isBuying = ref(false);
-const statusBuy = ref('');
+
+const pollForSignature = async (connection: Connection, reference: PublicKey) => {
+  for (let i = 0; i < 60; i++) {
+    try {
+      return await findReference(connection, reference, 'finalized');
+    } catch (e) {
+      if (e instanceof FindReferenceError) {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        continue;
+      }
+      throw e;
+    }
+  }
+};
 
 const handleBuy = async () => {
   try {
-    const config = useRuntimeConfig();
-    const recipient = new PublicKey(config.public.RECIPIENT_PUBLIC_KEY);
     isBuying.value = true;
     statusBuy.value = 'generatingQR';
     const {qr_code, reference} = await GenerateQRCode(
-      listing.value?.data as unknown as t_listing,
+      listing.value?.data,
       recipient,
     );
     statusBuy.value = 'generatedQR';
     await nextTick();
-    const element = document.getElementById('qr-code');
-    qr_code.append(element);
+    qr_code.append(document.getElementById('qr-code'));
     const connection = new Connection(
-      'https://devnet.helius-rpc.com/?api-key=6b2cf5f2-8b84-4b77-8936-8307eda261ce',
+      config.public.SOLANA_DEVNET_RPC,
       'confirmed',
     );
-    let signatureInfo = null;
-    for (let i = 0; i < 60; i++) {
-      try {
-        signatureInfo = await findReference(connection, reference, 'finalized');
-        break;
-      } catch (e) {
-        if (e instanceof FindReferenceError) {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-          continue;
-        }
-        throw e;
-      }
-    }
-    await validateTransfer(connection, signatureInfo?.signature as string, {
+    let signatureInfo = await pollForSignature(connection, reference);
+
+    await validateTransfer(connection, signatureInfo?.signature, {
       recipient,
       amount: new BigNumber(listing.value?.data.price),
       reference,
