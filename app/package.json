@@ -11,6 +11,8 @@
     "prettier": "prettier --write ."
   },
   "dependencies": {
+    "@vercel/analytics": "^1.2.2",
+    "@vercel/speed-insights": "^1.0.10",
     "@bangjelkoski/node-stdlib-browser": "^0.0.1",
     "@coral-xyz/anchor": "^0.29.0",
     "@nuxt/eslint": "^0.3.6",
