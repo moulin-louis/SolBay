@@ -22,7 +22,14 @@ export default defineNuxtConfig({
       esbuildOptions: {
         target: 'esnext',
       },
-      include: ['@coral-xyz/anchor', '@solana/web3.js', 'yup'],
+      include: [
+        '@coral-xyz/anchor',
+        '@solana/web3.js',
+        'yup',
+        '@solana/pay',
+        'bignumber.js',
+        '@vercel/speed-insights/nuxt',
+      ],
     },
   },
   experimental: {
