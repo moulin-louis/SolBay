@@ -3,6 +3,7 @@ import {date, mixed, number, object, string} from 'yup';
 import type {FormSubmitEvent} from '#ui/types';
 
 import {Keypair} from '@solana/web3.js';
+import {useAnchorWallet, useWallet} from 'solana-wallets-vue';
 
 const file_path = ref<string>();
 const isLoading = ref(false);
@@ -31,16 +32,18 @@ const schema = object({
 const onSubmit = async (event: FormSubmitEvent<any>) => {
   isLoading.value = true;
   try {
+    const {wallet} = useWallet();
+    const pub_key = wallet.value?.adapter.publicKey;
+    if (!pub_key) throw new Error('Wallet not connected');
     const listing: t_listing = {
       name: form.name,
       description: form.description,
-      seller: new Keypair().publicKey,
+      seller: pub_key,
       ipfs_hash: '',
       token: {},
       price: form.price,
     };
     const ImageData = new FormData();
-    console.log('form file=', form.file);
     ImageData.append('file', form.file as unknown as File);
     let answer = await $fetch('/api/upload-file-ipfs', {
       method: 'POST',
@@ -51,7 +54,6 @@ const onSubmit = async (event: FormSubmitEvent<any>) => {
         'An error occurred while uploading the file:' + answer.data,
       );
     listing.ipfs_hash = answer.data;
-    console.log(' ipfs_hash = ', listing.ipfs_hash);
     answer = await $fetch('/api/create-listing', {
       method: 'POST',
       body: JSON.stringify(listing),
@@ -62,24 +64,21 @@ const onSubmit = async (event: FormSubmitEvent<any>) => {
       icon: 'i-material-symbols-check-circle-outline',
     });
     console.log('Listing created');
-  } catch (error) {
-    const e = error as Error;
+  } catch (e) {
+    const error = e as Error;
     toast.add({
       id: 'error-notification',
       title: 'An error occurred while creating the listing',
-      description: e.message,
+      description: error.message,
       icon: '',
+      color: 'red',
     });
-    console.error(e);
   } finally {
     isLoading.value = false;
   }
 };
 const handleFileChange = (files: FileList) => {
   if (files.length === 0) return;
-  if (files[0] instanceof File) {
-    console.log('files[0] is a File');
-  }
   form.file = files[0];
 };
 </script>

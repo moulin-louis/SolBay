@@ -2,6 +2,7 @@ export default defineEventHandler(
   async (event): Promise<t_apiAnswer<t_listing> | t_apiAnswer<string>> => {
     try {
       const body = await readBody(event);
+      if (!body) throw new Error('Empty body');
       const id = body.id;
       if (typeof id !== 'string') throw new Error('Invalid id');
       const storage = await useStorage('db');

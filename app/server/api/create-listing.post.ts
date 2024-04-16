@@ -1,13 +1,20 @@
 import {v4 as uuidv4} from 'uuid';
-import checkEmptyFieldListing from '~/composables/checkEmptyFieldListing';
+import {checkMissingParams} from '../../composables/checkMissingParams';
 
 export default defineEventHandler(async (event) => {
   try {
     const listing: t_listing = (await readBody(event)) as t_listing;
+    const requiredParams = [
+      'name',
+      'description',
+      'seller',
+      'ipfs_hash',
+      'price',
+    ];
+    checkMissingParams(listing, requiredParams);
     listing.id = uuidv4();
     listing.created_at = new Date().toISOString();
-    if (checkEmptyFieldListing(listing) == false)
-      throw new Error('Empty or undefined field found');
+
     await useStorage('db').setItem(listing.id.toString(), listing);
     return {
       status: 200,

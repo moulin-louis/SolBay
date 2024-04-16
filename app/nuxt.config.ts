@@ -2,13 +2,7 @@ import * as process from 'process';
 
 export default defineNuxtConfig({
   ssr: false,
-  modules: [
-    '@nuxt/ui',
-    '@nuxt/fonts',
-    '@vueuse/nuxt',
-    'nuxt-icon',
-    '@nuxt/eslint',
-  ],
+  modules: ['@nuxt/ui', '@nuxt/fonts', '@vueuse/nuxt', '@nuxt/eslint'],
   nitro: {
     devStorage: {
       db: {
@@ -28,20 +22,19 @@ export default defineNuxtConfig({
       esbuildOptions: {
         target: 'esnext',
       },
-      include: ['@coral-xyz/anchor', '@solana/web3.js', 'buffer', 'yup'],
+      include: ['@coral-xyz/anchor', '@solana/web3.js', 'yup'],
     },
   },
-  plugins: [
-    { src: '~/plugins/buffer-polyfill.ts', mode: 'client' },
-  ],
   experimental: {
     clientNodeCompat: true,
   },
   runtimeConfig: {
     PINATA_JWT: process.env.NUXT_PINATA_JWT,
     PROGRAM_ID: process.env.NUXT_PROGRAM_ID,
+    RECIPIENT_PUBLIC_KEY: process.env.NUXT_RECIPIENT_PUBLIC_KEY,
     public: {
       PROGRAM_ID: process.env.NUXT_PROGRAM_ID,
+      RECIPIENT_PUBLIC_KEY: process.env.NUXT_RECIPIENT_PUBLIC_KEY,
     },
   },
   devtools: {
@@ -54,4 +47,8 @@ export default defineNuxtConfig({
     includeWorkspace: true,
   },
   eslint: {},
+  ui: {
+    primary: 'green',
+    gray: 'cool',
+  },
 });

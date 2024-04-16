@@ -2,8 +2,11 @@
   <div>
     <NuxtLoadingIndicator />
     <NuxtLayout>
-      <NuxtPage />
+      <UContainer>
+        <NuxtPage />
+      </UContainer>
     </NuxtLayout>
     <UNotifications />
+    <UModal />
   </div>
 </template>

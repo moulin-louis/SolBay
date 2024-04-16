@@ -1,6 +1,11 @@
 <script lang="ts" setup>
-import {encodeURL} from '@solana/pay';
+import {Connection, PublicKey} from '@solana/web3.js';
+import {validateTransfer} from '@solana/pay';
+import {FindReferenceError} from '~/composables/findReference';
+import BigNumber from 'bignumber.js';
+import type QRCodeStyling from '@solana/qr-code-styling';
 
+const toast = useToast();
 const route = useRoute();
 const {
   data: listing,
@@ -10,10 +15,67 @@ const {
   method: 'POST',
   body: JSON.stringify({id: route.params.id_listing}),
 });
+const isBuying = ref(false);
+const statusBuy = ref('');
 
-const handleBuy = () => {
-  console.log('Buy button clicked');
-  const url = encodeURL({path: 'test'});
+const handleBuy = async () => {
+  try {
+    const config = useRuntimeConfig();
+    const recipient = new PublicKey(config.public.RECIPIENT_PUBLIC_KEY);
+    isBuying.value = true;
+    statusBuy.value = 'generatingQR';
+    const {qr_code, reference} = await GenerateQRCode(
+      listing.value?.data as unknown as t_listing,
+      recipient,
+    );
+    statusBuy.value = 'generatedQR';
+    await nextTick();
+    const element = document.getElementById('qr-code');
+    qr_code.append(element);
+    const connection = new Connection(
+      'https://devnet.helius-rpc.com/?api-key=6b2cf5f2-8b84-4b77-8936-8307eda261ce',
+      'confirmed',
+    );
+    let signatureInfo = null;
+    for (let i = 0; i < 60; i++) {
+      try {
+        signatureInfo = await findReference(connection, reference, 'finalized');
+        break;
+      } catch (e) {
+        if (e instanceof FindReferenceError) {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          continue;
+        }
+        throw e;
+      }
+    }
+    await validateTransfer(connection, signatureInfo?.signature as string, {
+      recipient,
+      amount: new BigNumber(listing.value?.data.price),
+      reference,
+      memo: 'TOTO',
+    });
+    statusBuy.value = 'paymentConfirmed';
+    toast.add({
+      id: 'success-notification',
+      title: 'Payment confirmed',
+      description: 'The payment has been confirmed',
+      icon: '',
+      color: 'green',
+    });
+  } catch (e) {
+    const error = e as Error;
+    toast.add({
+      id: 'error-notification',
+      title: 'An error occurred during the payement',
+      description: error.message,
+      icon: '',
+      color: 'red',
+    });
+  } finally {
+    isBuying.value = false;
+    statusBuy.value = '';
+  }
 };
 </script>
 
@@ -41,13 +103,27 @@ const handleBuy = () => {
               <div class="listing-price">Price: ${{ listing.data.price }}</div>
             </div>
           </div>
-          <button class="buy-button" @click="handleBuy">Buy this Item</button>
-
-          <UDivider orientation="vertical" />
+          <UButton
+            class="buy-button"
+            @click="handleBuy"
+            label="Buy This Item"
+          />
         </template>
       </UCard>
     </div>
   </div>
+  <UModal v-model="isBuying">
+    <UCard class="p-4">
+      <div class="card-header">
+        <div class="card-title">Buying: {{ listing.data.name }}</div>
+        <div v-if="statusBuy === 'generatingQR'">
+          Please wait till we generate the QR code for you
+        </div>
+        <div v-else-if="statusBuy === 'generatedQR'" id="qr-code" />
+        <div v-else>Payement confirmed!</div>
+      </div>
+    </UCard>
+  </UModal>
 </template>
 
 <style scoped>

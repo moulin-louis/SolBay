@@ -5,6 +5,5 @@ declare global {
     wallet: Ref<AnchorWallet | any>;
     connection: Connection;
     provider: ComputedRef<AnchorProvider>;
-    program: ComputedRef<Program>;
   };
 }
