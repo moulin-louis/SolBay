@@ -1,9 +1,7 @@
-import {resolve} from 'path';
-import {Buffer} from 'buffer';
-import {inject} from 'vue';
 import * as process from 'process';
 
 export default defineNuxtConfig({
+  ssr: false,
   modules: [
     '@nuxt/ui',
     '@nuxt/fonts',
@@ -25,34 +23,20 @@ export default defineNuxtConfig({
     },
     build: {
       target: 'esnext',
-      rollupOptions: {
-        plugins: [inject({Buffer: ['buffer', 'Buffer']})],
-      },
-    },
-    plugins: [inject({Buffer: ['buffer', 'Buffer']})],
-    resolve: {
-      alias: {
-        buffer: 'buffer',
-      },
-    },
-    define: {
-      global: {Buffer},
     },
     optimizeDeps: {
-      include: ['@coral-xyz/anchor', '@solana/web3.js', 'buffer', 'yup'],
       esbuildOptions: {
         target: 'esnext',
       },
+      include: ['@coral-xyz/anchor', '@solana/web3.js', 'buffer', 'yup'],
     },
   },
-  ssr: false,
-  storage: {
-    db: {
-      driver: 'fs',
-      base: './data/db',
-    },
+  plugins: [
+    { src: '~/plugins/buffer-polyfill.ts', mode: 'client' },
+  ],
+  experimental: {
+    clientNodeCompat: true,
   },
-  image: {},
   runtimeConfig: {
     PINATA_JWT: process.env.NUXT_PINATA_JWT,
     PROGRAM_ID: process.env.NUXT_PROGRAM_ID,

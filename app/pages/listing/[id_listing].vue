@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import {encodeURL} from '@solana/pay';
+
 const route = useRoute();
 const {
   data: listing,
@@ -8,6 +10,11 @@ const {
   method: 'POST',
   body: JSON.stringify({id: route.params.id_listing}),
 });
+
+const handleBuy = () => {
+  console.log('Buy button clicked');
+  const url = encodeURL({path: 'test'});
+};
 </script>
 
 <template>
@@ -34,11 +41,11 @@ const {
               <div class="listing-price">Price: ${{ listing.data.price }}</div>
             </div>
           </div>
-          <UButton>Buy this Item</UButton>
-          <UDivider orientation="vertical"/>
+          <button class="buy-button" @click="handleBuy">Buy this Item</button>
+
+          <UDivider orientation="vertical" />
         </template>
       </UCard>
-
     </div>
   </div>
 </template>
@@ -86,7 +93,7 @@ const {
   color: #333;
 }
 
-.refresh-button {
+.buy-button {
   font-size: 1rem;
   padding: 0.5rem 1rem;
   background-color: #0055ff;
@@ -97,12 +104,13 @@ const {
   transition: background-color 0.3s;
 }
 
-.refresh-button:hover {
+.buy-button:hover {
   background-color: #0033aa;
 }
 
 /* Responsive adjustments */
-@media (max-width: 48em) { /* 768px */
+@media (max-width: 48em) {
+  /* 768px */
   .card {
     border-radius: 0;
   }

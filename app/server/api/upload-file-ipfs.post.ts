@@ -37,7 +37,6 @@ export default defineEventHandler(
       };
     } catch (e) {
       const error = e as Error;
-      console.log('error in upload ipfs: ', error.message);
       return {
         status: 500,
         data: error.message,
