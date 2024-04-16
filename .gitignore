@@ -32,3 +32,4 @@ node_modules
 app/.nuxt
 .vercel
 app/.vercel
+app/data
