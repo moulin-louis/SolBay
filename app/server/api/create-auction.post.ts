@@ -16,11 +16,12 @@ export default defineEventHandler(async (event) => {
       status: 200,
       data: 'Good!',
     };
-  } catch (e) {
+  } catch (error) {
+    const e = error as Error;
     return {
       status: 500,
       data: JSON.stringify({
-        error: 'error when creating auction:' + e.toString(),
+        error: 'error when creating auction:' + e.message,
       }),
     };
   }
