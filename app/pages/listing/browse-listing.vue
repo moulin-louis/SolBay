@@ -4,16 +4,9 @@ const {
   refresh,
   pending,
   error,
-} = await useFetch('/api/fetch-listing', {
+} = await useFetch('/api/fetch-all-listing', {
   method: 'POST',
 });
-
-const getImgLink = (listing: t_listing): string => {
-  const ipfs_gateway = 'https://aqua-general-primate-588.mypinata.cloud/ipfs/';
-  const url = `${ipfs_gateway}${listing.ipfs_hash}`;  // Use listing.ipfs_hash
-  console.log('result = ', url);
-  return url;
-};
 </script>
 
 <template>
@@ -30,60 +23,69 @@ const getImgLink = (listing: t_listing): string => {
         <div
           v-for="listing in listings.data"
           :key="listing.id"
-          class="auction-item"
+          class="listing-item"
         >
           <UCard>
             <template #header>
               <div class="listing-name">{{ listing.name }}</div>
             </template>
             <div class="listing-description">{{ listing.description }}</div>
-            <div class="listing-price">{{ listing.price }}</div>
+            <div class="listing-date">
+              Listing date:
+              {{ new Date(listing.created_at).toLocaleDateString() }}
+            </div>
+            <div class="listing-price">Price: ${{ listing.price }}</div>
             <img :src="getImgLink(listing)" />
             <template #footer>
-              <UButton>More Details</UButton>
+              <ULink :to="`/listing/${listing.id}`">
+                <UButton>View Details</UButton>
+              </ULink>
             </template>
           </UCard>
         </div>
       </div>
     </div>
   </div>
-  <div>
-    {{ listings.data }}
-  </div>
 </template>
 
 <style scoped>
 .listings-container {
-  padding: 20px;
+  padding: 1.23em;
 }
 .loading,
 .error {
   text-align: center;
-  font-size: 18px;
-  margin-top: 20px;
+  font-size: 1.125em; /* 18px if base font size is 16px */
+  margin-top: 1.25em;
 }
 .refresh-button {
-  margin-bottom: 20px;
+  margin-bottom: 1.25em;
   text-align: right;
 }
 .listing-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(18.75em, 1fr)
+  ); /* 300px assuming base font size is 16px */
+  gap: 1.25em; /* 20px assuming base font size is 16px */
 }
-.listing-item {
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 10px;
+.listing-item img {
+  width: 100%;
+  height: 12.5em; /* 200px if base font size is 16px */
+  object-fit: contain;
+  object-position: center;
+  background-color: #fff;
+  border-radius: 2%; /* Using a percentage for responsiveness */
 }
 .listing-name,
 .listing-description,
 .listing-price,
 .listing-date {
-  margin-bottom: 10px;
+  margin-bottom: 0.625em; /* 10px if base font size is 16px */
 }
 .separator {
-  margin-top: 10px;
+  margin-top: 0.625em;
   text-align: center;
 }
 </style>

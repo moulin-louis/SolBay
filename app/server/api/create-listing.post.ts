@@ -3,7 +3,7 @@ import checkEmptyFieldListing from '~/composables/checkEmptyFieldListing';
 
 export default defineEventHandler(async (event) => {
   try {
-    const listing: t_listing = (await readBody(event)) as t_auction;
+    const listing: t_listing = (await readBody(event)) as t_listing;
     listing.id = uuidv4();
     listing.created_at = new Date().toISOString();
     if (checkEmptyFieldListing(listing) == false)
@@ -13,13 +13,11 @@ export default defineEventHandler(async (event) => {
       status: 200,
       data: 'Good!',
     };
-  } catch (error) {
-    const e = error as Error;
+  } catch (e) {
+    const error = e as Error;
     return {
       status: 500,
-      data: JSON.stringify({
-        error: 'error when creating auction:' + e.toString(),
-      }),
+      data: 'error when creating listing:' + error.message,
     };
   }
 });

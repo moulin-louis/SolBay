@@ -40,13 +40,16 @@ const onSubmit = async (event: FormSubmitEvent<any>) => {
       price: form.price,
     };
     const ImageData = new FormData();
+    console.log('form file=', form.file);
     ImageData.append('file', form.file as unknown as File);
     let answer = await $fetch('/api/upload-file-ipfs', {
       method: 'POST',
       body: ImageData,
     });
     if (answer.status === 500)
-      throw new Error('An error occurred while uploading the file');
+      throw new Error(
+        'An error occurred while uploading the file:' + answer.data,
+      );
     listing.ipfs_hash = answer.data;
     console.log(' ipfs_hash = ', listing.ipfs_hash);
     answer = await $fetch('/api/create-listing', {
@@ -74,6 +77,9 @@ const onSubmit = async (event: FormSubmitEvent<any>) => {
 };
 const handleFileChange = (files: FileList) => {
   if (files.length === 0) return;
+  if (files[0] instanceof File) {
+    console.log('files[0] is a File');
+  }
   form.file = files[0];
 };
 </script>
@@ -86,42 +92,68 @@ const handleFileChange = (files: FileList) => {
       @submit="onSubmit"
       class="form-container"
     >
-      <UFormGroup label="File" name="file" class="form-group">
+      <UFormGroup
+        label="File"
+        name="file"
+        description="Image of your product"
+        class="form-group"
+      >
         <UInput
+          variant="outline"
+          size="md"
+          placeholder="Upload a file"
           type="file"
           @change="handleFileChange($event)"
-          size="md"
           v-model="file_path"
-          placeholder="Upload a file"
-          class="file-input"
         />
       </UFormGroup>
-      <UFormGroup label="Name" name="name" class="form-group">
+      <UFormGroup
+        label="Name"
+        name="name"
+        description="Name for your listing"
+        class="form-group"
+      >
         <UInput
-          v-model="form.name"
+          size="md"
+          variant="outline"
           placeholder="Listing Name"
-          class="text-input"
+          v-model="form.name"
         />
       </UFormGroup>
-      <UFormGroup label="Description" name="description" class="form-group">
+      <UFormGroup
+        label="Description"
+        name="description"
+        description="A little description for your listing"
+        class="form-group"
+      >
         <UInput
-          v-model="form.description"
+          size="md"
+          variant="outline"
           placeholder="Listing description"
-          class="text-input"
+          v-model="form.description"
         />
       </UFormGroup>
-      <UFormGroup label="Price" name="price" class="form-group">
+      <UFormGroup
+        label="Price"
+        name="price"
+        description="The sell price in token of your listing"
+        class="form-group"
+      >
         <UInput
-          v-model="form.price"
+          size="md"
+          variant="outline"
           placeholder="Minimum price (in tokens)"
-          class="text-input"
+          v-model="form.price"
         />
       </UFormGroup>
       <UButton
         type="submit"
         icon="i-heroicons-pencil-square"
-        color="black"
-        class="submit-button"
+        color="primary"
+        variant="solid"
+        size="md"
+        :ui="{rounded: 'rounded-full'}"
+        block
         :disabled="isLoading"
         :loading="isLoading"
       >
@@ -154,35 +186,5 @@ const handleFileChange = (files: FileList) => {
 .form-group {
   margin-bottom: 1.25rem; /* equivalent to 20px */
   width: 100%;
-}
-
-.file-input,
-.text-input,
-.date-input {
-  width: 100%;
-  padding: 0.625rem 0.9375rem; /* padding adjusted to rem */
-  border: 0.0625rem solid #ccc; /* border-width to rem */
-  border-radius: 0.25rem;
-  transition: border-color 0.3s ease-in-out;
-}
-
-.file-input:hover,
-.text-input:hover,
-.date-input:hover {
-  border-color: #888;
-}
-
-.submit-button {
-  padding: 0.625rem 1.875rem; /* padding adjusted to rem */
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 0.25rem;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.submit-button:hover {
-  background-color: #45a049;
 }
 </style>

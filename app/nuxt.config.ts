@@ -10,10 +10,8 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     'nuxt-icon',
     '@nuxt/eslint',
-    'formidable',
   ],
   nitro: {
-    // Development
     devStorage: {
       db: {
         driver: 'fs',
