@@ -1,5 +1,5 @@
 export default defineEventHandler(
-  async (event): Promise<t_apiAnswer<t_listing[]> | t_apiAnswer<string>> => {
+  async (): Promise<t_apiAnswer<t_listing[]> | t_apiAnswer<string>> => {
     try {
       const storage = await useStorage('db');
       const keys: string[] = await storage.getKeys();

@@ -3,7 +3,6 @@ import {Connection, PublicKey} from '@solana/web3.js';
 import {validateTransfer} from '@solana/pay';
 import {FindReferenceError} from '~/composables/findReference';
 import BigNumber from 'bignumber.js';
-import type QRCodeStyling from '@solana/qr-code-styling';
 
 const toast = useToast();
 const route = useRoute();
@@ -20,7 +19,10 @@ const {
   body: JSON.stringify({id: route.params.id_listing}),
 });
 
-const pollForSignature = async (connection: Connection, reference: PublicKey) => {
+const pollForSignature = async (
+  connection: Connection,
+  reference: PublicKey,
+) => {
   for (let i = 0; i < 60; i++) {
     try {
       return await findReference(connection, reference, 'finalized');
@@ -39,19 +41,21 @@ const handleBuy = async () => {
     isBuying.value = true;
     statusBuy.value = 'generatingQR';
     const {qr_code, reference} = await GenerateQRCode(
-      listing.value?.data,
+      listing.value?.data as t_listing,
       recipient,
     );
     statusBuy.value = 'generatedQR';
     await nextTick();
-    qr_code.append(document.getElementById('qr-code'));
+    qr_code.append(
+      document.getElementById('qr-code') as HTMLElement | undefined,
+    );
     const connection = new Connection(
       config.public.SOLANA_DEVNET_RPC,
       'confirmed',
     );
-    let signatureInfo = await pollForSignature(connection, reference);
+    const signatureInfo = await pollForSignature(connection, reference);
 
-    await validateTransfer(connection, signatureInfo?.signature, {
+    await validateTransfer(connection, signatureInfo?.signature as string, {
       recipient,
       amount: new BigNumber(listing.value?.data.price),
       reference,
@@ -82,50 +86,54 @@ const handleBuy = async () => {
 </script>
 
 <template>
-  <div class="card">
-    <div v-if="pending">Loading...</div>
-    <div v-else-if="error">Error fetching listing: {{ error.message }}</div>
-    <div v-else>
-      <UCard>
-        <template #header>
-          <div class="card-header">
-            <img :src="getImgLink(listing?.data)" />
-          </div>
-        </template>
-        <div class="card-content">
-          <div class="card-title">Name: {{ listing.data.name }}</div>
-          <UDivider type="dashed" size="sm" />
-          <div class="card-description">
-            {{ listing.data.description }}
-          </div>
-        </div>
-        <template #footer>
-          <div class="card-footer">
-            <div>
-              <div class="listing-price">Price: ${{ listing.data.price }}</div>
+  <div>
+    <div class="card">
+      <div v-if="pending">Loading...</div>
+      <div v-else-if="error">Error fetching listing: {{ error.message }}</div>
+      <div v-else>
+        <UCard>
+          <template #header>
+            <div class="card-header">
+              <img :src="getImgLink(listing?.data as t_listing)" >
+            </div>
+          </template>
+          <div class="card-content">
+            <div class="card-title">Name: {{ listing.data.name }}</div>
+            <UDivider type="dashed" size="sm" />
+            <div class="card-description">
+              {{ listing.data.description }}
             </div>
           </div>
-          <UButton
-            class="buy-button"
-            @click="handleBuy"
-            label="Buy This Item"
-          />
-        </template>
-      </UCard>
-    </div>
-  </div>
-  <UModal v-model="isBuying">
-    <UCard class="p-4">
-      <div class="card-header">
-        <div class="card-title">Buying: {{ listing.data.name }}</div>
-        <div v-if="statusBuy === 'generatingQR'">
-          Please wait till we generate the QR code for you
-        </div>
-        <div v-else-if="statusBuy === 'generatedQR'" id="qr-code" />
-        <div v-else>Payement confirmed!</div>
+          <template #footer>
+            <div class="card-footer">
+              <div>
+                <div class="listing-price">
+                  Price: ${{ listing.data.price }}
+                </div>
+              </div>
+            </div>
+            <UButton
+              class="buy-button"
+              label="Buy This Item"
+              @click="handleBuy"
+            />
+          </template>
+        </UCard>
       </div>
-    </UCard>
-  </UModal>
+    </div>
+    <UModal v-model="isBuying">
+      <UCard class="p-4">
+        <div class="card-header">
+          <div class="card-title">Buying: {{ listing.data.name }}</div>
+          <div v-if="statusBuy === 'generatingQR'">
+            Please wait till we generate the QR code for you
+          </div>
+          <div v-else-if="statusBuy === 'generatedQR'" id="qr-code" />
+          <div v-else>Payement confirmed!</div>
+        </div>
+      </UCard>
+    </UModal>
+  </div>
 </template>
 
 <style scoped>

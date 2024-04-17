@@ -1,7 +1,7 @@
 export const UploadToIpfs = async (
   data: any,
   type_file: string,
-): Promise<any> => {
+): Promise<string> => {
   try {
     const config = useRuntimeConfig();
     const ImageData = new FormData();

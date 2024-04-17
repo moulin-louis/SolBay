@@ -8,11 +8,11 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "prettier": "prettier --write ."
+    "prettier": "prettier --write .",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
-    "@vercel/analytics": "^1.2.2",
-    "@vercel/speed-insights": "^1.0.10",
     "@bangjelkoski/node-stdlib-browser": "^0.0.1",
     "@coral-xyz/anchor": "^0.29.0",
     "@nuxt/eslint": "^0.3.6",
@@ -22,6 +22,8 @@
     "@solana/pay": "^0.2.5",
     "@solana/qr-code-styling": "^1.6.0",
     "@solana/web3.js": "^1.91.4",
+    "@vercel/analytics": "^1.2.2",
+    "@vercel/speed-insights": "^1.0.10",
     "add": "^2.0.6",
     "bignumber.js": "^9.1.2",
     "buffer": "^6.0.3",

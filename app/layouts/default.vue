@@ -4,12 +4,14 @@ import {WalletMultiButton} from 'solana-wallets-vue';
 </script>
 
 <template>
-  <SpeedInsights />
-  <ClientOnly>
-    <WalletMultiButton />
-  </ClientOnly>
-  <Header />
-  <slot />
+  <div>
+    <SpeedInsights />
+    <ClientOnly>
+      <WalletMultiButton />
+    </ClientOnly>
+    <NavigationHeader />
+    <slot />
+  </div>
 </template>
 
 <style scoped></style>

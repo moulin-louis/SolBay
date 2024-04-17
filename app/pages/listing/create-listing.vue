@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import {date, mixed, number, object, string} from 'yup';
-import type {FormSubmitEvent} from '#ui/types';
+import { mixed, number, object, string} from 'yup';
 
-import {Keypair} from '@solana/web3.js';
-import {useAnchorWallet, useWallet} from 'solana-wallets-vue';
+import {useWallet} from 'solana-wallets-vue';
 
 const file_path = ref<string>();
 const isLoading = ref(false);
@@ -29,7 +27,7 @@ const schema = object({
     .required(),
 });
 
-const onSubmit = async (event: FormSubmitEvent<any>) => {
+const onSubmit = async () => {
   isLoading.value = true;
   try {
     const {wallet} = useWallet();
@@ -88,8 +86,8 @@ const handleFileChange = (files: FileList) => {
     <UForm
       :schema="schema"
       :state="form"
-      @submit="onSubmit"
       class="form-container"
+      @submit="onSubmit"
     >
       <UFormGroup
         label="File"
@@ -98,12 +96,12 @@ const handleFileChange = (files: FileList) => {
         class="form-group"
       >
         <UInput
+          v-model="file_path"
           variant="outline"
           size="md"
           placeholder="Upload a file"
           type="file"
           @change="handleFileChange($event)"
-          v-model="file_path"
         />
       </UFormGroup>
       <UFormGroup
@@ -113,10 +111,10 @@ const handleFileChange = (files: FileList) => {
         class="form-group"
       >
         <UInput
+          v-model="form.name"
           size="md"
           variant="outline"
           placeholder="Listing Name"
-          v-model="form.name"
         />
       </UFormGroup>
       <UFormGroup
@@ -126,10 +124,10 @@ const handleFileChange = (files: FileList) => {
         class="form-group"
       >
         <UInput
+          v-model="form.description"
           size="md"
           variant="outline"
           placeholder="Listing description"
-          v-model="form.description"
         />
       </UFormGroup>
       <UFormGroup
@@ -139,10 +137,10 @@ const handleFileChange = (files: FileList) => {
         class="form-group"
       >
         <UInput
+          v-model="form.price"
           size="md"
           variant="outline"
           placeholder="Minimum price (in tokens)"
-          v-model="form.price"
         />
       </UFormGroup>
       <UButton
