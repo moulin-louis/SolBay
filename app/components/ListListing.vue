@@ -8,7 +8,7 @@ const {variant, listings} = props;
 </script>
 
 <template>
-  <div id="list-listing">
+  <div class="listing-list">
     <div v-for="listing in listings" :key="listing.id" class="listing-item">
       <div v-if="variant === 'full'">
         <FullListing :listing="listing" />
@@ -23,7 +23,7 @@ const {variant, listings} = props;
 <script lang="ts" setup></script>
 
 <style scoped>
-.list-listing {
+.listing-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(18.75em, 1fr));
   gap: 1.25em;
