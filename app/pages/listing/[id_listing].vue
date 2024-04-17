@@ -21,10 +21,7 @@ const {
   body: JSON.stringify({id: route.params.id_listing}),
 });
 
-const pollForSignature = async (
-  connection: Connection,
-  reference: PublicKey,
-) => {
+const pollForSignature = async (connection: Connection, reference: PublicKey) => {
   for (let i = 0; i < 60; i++) {
     try {
       return await findReference(connection, reference, 'finalized');
@@ -49,13 +46,8 @@ const handleBuy = async () => {
     );
     statusBuy.value = 'generatedQR';
     await nextTick();
-    qr_code.append(
-      document.getElementById('qr-code') as HTMLElement | undefined,
-    );
-    const connection = new Connection(
-      config.public.SOLANA_DEVNET_RPC,
-      'confirmed',
-    );
+    qr_code.append(document.getElementById('qr-code') as HTMLElement | undefined);
+    const connection = new Connection(config.public.SOLANA_DEVNET_RPC, 'confirmed');
     const signatureInfo = await pollForSignature(connection, reference);
     if (!signatureInfo) throw new Error('Payment not confirmed');
 
@@ -106,18 +98,12 @@ const handleBuy = async () => {
       <div v-else-if="error">Error fetching listing: {{ error.message }}</div>
       <div v-else>
         <FullListing :listing="listing as t_listing">
-          <UButton
-            class="buy-button"
-            label="Buy This Item"
-            @click="handleBuy"
-          />
+          <UButton class="buy-button" label="Buy This Item" @click="handleBuy" />
           <UModal v-model="isBuying">
             <UCard class="p-4">
               <div class="card-header">
                 <div class="card-title">Buying this item...</div>
-                <div v-if="wallet === null">
-                  Please Connect your wallet first
-                </div>
+                <div v-if="wallet === null">Please Connect your wallet first</div>
                 <div v-else-if="statusBuy === 'generatingQR'">
                   Please wait till we generate the QR code for you
                 </div>

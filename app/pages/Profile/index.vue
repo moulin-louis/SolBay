@@ -21,10 +21,7 @@ const {
     <div v-if="pending">Loading...</div>
     <div v-else-if="error">Error fetching listing: {{ error.message }}</div>
     <div v-else>
-      <ListListing
-        :listings="listings as unknown as t_listing[]"
-        variant="tiny"
-      />
+      <ListListing :listings="listings as unknown as t_listing[]" variant="tiny" />
     </div>
     <UButton @click="refresh">Refresh</UButton>
   </div>

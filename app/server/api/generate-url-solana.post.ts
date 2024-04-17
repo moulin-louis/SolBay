@@ -19,11 +19,7 @@ export const encodeURL = ({
   memo: string;
 }): URL => {
   const url = new URL('solana:' + recipient);
-  if (amount)
-    url.searchParams.append(
-      'amount',
-      amount.toFixed(amount.decimalPlaces() ?? 0),
-    );
+  if (amount) url.searchParams.append('amount', amount.toFixed(amount.decimalPlaces() ?? 0));
   if (splToken) url.searchParams.append('spl-token', splToken);
   if (reference) url.searchParams.append('reference', reference);
   if (label) url.searchParams.append('label', label);
@@ -36,13 +32,7 @@ export default defineEventHandler(async (event): Promise<URL> => {
   try {
     const body = await readBody(event);
     if (!body) throw new Error('No body');
-    const requiredParams = [
-      'recipient',
-      'amount',
-      'reference',
-      'message',
-      'memo',
-    ];
+    const requiredParams = ['recipient', 'amount', 'reference', 'message', 'memo'];
     checkMissingParams(body, requiredParams);
     const {recipient, amount, reference, message, memo} = body;
     const label = 'SolBay';

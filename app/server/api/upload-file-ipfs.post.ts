@@ -1,7 +1,4 @@
-export const UploadToIpfs = async (
-  data: Buffer,
-  type_file: string,
-): Promise<string> => {
+export const UploadToIpfs = async (data: Buffer, type_file: string): Promise<string> => {
   try {
     const config = useRuntimeConfig();
     const ImageData = new FormData();

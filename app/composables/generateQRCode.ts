@@ -13,8 +13,7 @@ export const GenerateQRCode = async (
   recipient: PublicKey,
 ): Promise<t_return> => {
   const wallet = new Keypair();
-  if (listing === undefined || typeof listing === 'string')
-    throw new Error('Listing is undefined');
+  if (listing === undefined || typeof listing === 'string') throw new Error('Listing is undefined');
   console.log('recipient = ', recipient);
   const res = await $fetch('/api/generate-url-solana', {
     method: 'POST',

@@ -4,13 +4,7 @@ import {checkMissingParams} from '../utils/checkMissingParams';
 export default defineEventHandler(async (event): Promise<string> => {
   try {
     const listing: t_listing = (await readBody(event)) as t_listing;
-    const requiredParams = [
-      'name',
-      'description',
-      'seller',
-      'ipfs_hash',
-      'price',
-    ];
+    const requiredParams = ['name', 'description', 'seller', 'ipfs_hash', 'price'];
     checkMissingParams(listing, requiredParams);
     listing.id = uuidv4();
     listing.created_at = new Date().toISOString();

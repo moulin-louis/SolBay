@@ -1,9 +1,4 @@
-import type {
-  ConfirmedSignatureInfo,
-  Connection,
-  Finality,
-  PublicKey,
-} from '@solana/web3.js';
+import type {ConfirmedSignatureInfo, Connection, Finality, PublicKey} from '@solana/web3.js';
 
 export class FindReferenceError extends Error {
   name = 'FindReferenceError';
@@ -23,11 +18,7 @@ export const findReference = async (
   reference: PublicKey,
   finality: Finality,
 ): Promise<ConfirmedSignatureInfo | null> => {
-  const signatures = await connection.getSignaturesForAddress(
-    reference,
-    {},
-    finality,
-  );
+  const signatures = await connection.getSignaturesForAddress(reference, {}, finality);
 
   const length = signatures.length;
   if (!length) throw new FindReferenceError('no reference found');

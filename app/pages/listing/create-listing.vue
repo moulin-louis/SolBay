@@ -21,8 +21,7 @@ const schema = object({
     .test(
       'fileType',
       'Please provide a valid image file',
-      (value) =>
-        !value || (value && ['image/jpeg', 'image/png'].includes(value.type)),
+      (value) => !value || (value && ['image/jpeg', 'image/png'].includes(value.type)),
     )
     .required(),
 });
@@ -79,22 +78,10 @@ const handleFileChange = (files: FileList) => {
 
 <template>
   <div>
-    <div v-if="wallet === null">
-      Please connect your wallet to create a listing
-    </div>
+    <div v-if="wallet === null">Please connect your wallet to create a listing</div>
     <div v-else class="form-wrapper">
-      <UForm
-        :schema="schema"
-        :state="form"
-        class="form-container"
-        @submit="onSubmit"
-      >
-        <UFormGroup
-          label="File"
-          name="file"
-          description="Image of your product"
-          class="form-group"
-        >
+      <UForm :schema="schema" :state="form" class="form-container" @submit="onSubmit">
+        <UFormGroup label="File" name="file" description="Image of your product" class="form-group">
           <UInput
             v-model="file_path"
             variant="outline"
@@ -104,18 +91,8 @@ const handleFileChange = (files: FileList) => {
             @change="handleFileChange($event)"
           />
         </UFormGroup>
-        <UFormGroup
-          label="Name"
-          name="name"
-          description="Name for your listing"
-          class="form-group"
-        >
-          <UInput
-            v-model="form.name"
-            size="md"
-            variant="outline"
-            placeholder="Listing Name"
-          />
+        <UFormGroup label="Name" name="name" description="Name for your listing" class="form-group">
+          <UInput v-model="form.name" size="md" variant="outline" placeholder="Listing Name" />
         </UFormGroup>
         <UFormGroup
           label="Description"

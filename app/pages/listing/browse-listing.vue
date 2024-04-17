@@ -12,17 +12,12 @@ const {
 <template>
   <div class="listings-container">
     <div v-if="pending" class="loading">Loading...</div>
-    <div v-else-if="error" class="error">
-      Error fetching listing: {{ error.message }}
-    </div>
+    <div v-else-if="error" class="error">Error fetching listing: {{ error.message }}</div>
     <div v-else>
       <div class="refresh-button">
         <UButton @click="refresh">Refresh</UButton>
       </div>
-      <ListListing
-        :listings="listings as unknown as t_listing[]"
-        variant="tiny"
-      />
+      <ListListing :listings="listings as unknown as t_listing[]" variant="tiny" />
     </div>
   </div>
 </template>
