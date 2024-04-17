@@ -34,6 +34,7 @@ export default defineNuxtConfig({
     public: {
       PROGRAM_ID: process.env.NUXT_PROGRAM_ID,
       RECIPIENT_PUBLIC_KEY: process.env.NUXT_RECIPIENT_PUBLIC_KEY,
+      SOLANA_DEVNET_RPC: process.env.NUXT_SOLANA_DEVNET_RPC,
     },
   },
   devtools: {

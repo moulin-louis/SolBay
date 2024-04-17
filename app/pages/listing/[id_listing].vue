@@ -98,7 +98,12 @@ const handleBuy = async () => {
       <div v-else-if="error">Error fetching listing: {{ error.message }}</div>
       <div v-else>
         <FullListing :listing="listing as t_listing">
-          <UButton class="buy-button" label="Buy This Item" @click="handleBuy" />
+          <UButton
+            class="buy-button"
+            label="Buy This Item"
+            :disabled="listing?.buyer !== null"
+            @click="handleBuy"
+          />
           <UModal v-model="isBuying">
             <UCard class="p-4">
               <div class="card-header">
