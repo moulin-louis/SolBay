@@ -36,4 +36,5 @@ const {variant, listings} = props;
   background-color: #fff;
   border-radius: 2%; /* Using a percentage for responsiveness */
 }
+
 </style>

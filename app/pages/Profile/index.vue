@@ -2,6 +2,7 @@
 import {useWallet} from 'solana-wallets-vue';
 
 const wallet = useWallet();
+console.log('wallet', wallet);
 const {
   data: listings,
   refresh,
@@ -18,7 +19,8 @@ const {
 <template>
   <div>
     Profile:
-    <div v-if="pending">Loading...</div>
+    <div v-if="wallet === null">Please connect your wallet</div>
+    <div v-else-if="pending">Loading...</div>
     <div v-else-if="error">Error fetching listing: {{ error.message }}</div>
     <div v-else>
       <ListListing :listings="listings as unknown as t_listing[]" variant="tiny" />

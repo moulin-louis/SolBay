@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {mixed, number, object, string} from 'yup';
+import {useTokens} from '~/composables/useTokens';
 
 import {useWallet} from 'solana-wallets-vue';
 
@@ -8,10 +9,11 @@ const file_path = ref<string>();
 const isLoading = ref(false);
 const toast = useToast();
 const form = reactive({
+  file: undefined,
   name: '',
   description: '',
+  token: {},
   price: 0,
-  file: undefined,
 });
 const schema = object({
   name: string().max(50, 'Name must be less than 50 characters').required(),
@@ -108,6 +110,14 @@ const handleFileChange = (files: FileList) => {
           />
         </UFormGroup>
         <UFormGroup
+          label="Token"
+          name="token"
+          description="The token you want to sell your listing in"
+          class="form-group"
+        >
+          
+        </UFormGroup>
+        <UFormGroup
           label="Price"
           name="price"
           description="The sell price in token of your listing"
@@ -115,6 +125,7 @@ const handleFileChange = (files: FileList) => {
         >
           <UInput
             v-model="form.price"
+            type="number"
             size="md"
             variant="outline"
             placeholder="Minimum price (in tokens)"
