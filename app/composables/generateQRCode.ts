@@ -15,6 +15,7 @@ export const GenerateQRCode = async (
   const wallet = new Keypair();
   if (listing === undefined || typeof listing === 'string')
     throw new Error('Listing is undefined');
+  console.log('recipient = ', recipient);
   const res = await $fetch('/api/generate-url-solana', {
     method: 'POST',
     body: {
@@ -25,7 +26,6 @@ export const GenerateQRCode = async (
       memo: 'TOTO',
     },
   });
-  if (res.status === 500) throw new Error('Error generating url solana');
-  const url_solana: URL = res.data as unknown as URL;
+  const url_solana: URL = res as unknown as URL;
   return {qr_code: createQR(url_solana), reference: wallet.publicKey};
 };

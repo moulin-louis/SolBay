@@ -10,11 +10,10 @@
     "postinstall": "nuxt prepare",
     "prettier": "prettier --write .",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "prepare": "npm run prettier && npm run lint:fix"
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
-    "@bangjelkoski/node-stdlib-browser": "^0.0.1",
+    "@solana/web3.js": "^1.91.5",
     "@coral-xyz/anchor": "^0.29.0",
     "@nuxt/eslint": "^0.3.6",
     "@nuxt/fonts": "^0.6.1",
@@ -23,7 +22,6 @@
     "@nuxt/ui": "^2.15.2",
     "@solana/pay": "^0.2.5",
     "@solana/qr-code-styling": "^1.6.0",
-    "@solana/web3.js": "^1.91.4",
     "@vercel/analytics": "^1.2.2",
     "@vercel/speed-insights": "^1.0.10",
     "add": "^2.0.6",

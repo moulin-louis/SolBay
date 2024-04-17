@@ -18,16 +18,7 @@ export default defineNuxtConfig({
     },
   },
   vite: {
-    esbuild: {
-      target: 'esnext',
-    },
-    build: {
-      target: 'esnext',
-    },
     optimizeDeps: {
-      esbuildOptions: {
-        target: 'esnext',
-      },
       include: [
         '@coral-xyz/anchor',
         '@solana/web3.js',

@@ -35,7 +35,7 @@ const onSubmit = async () => {
     const listing: t_listing = {
       name: form.name,
       description: form.description,
-      seller: pub_key,
+      seller: pub_key.toString(),
       ipfs_hash: '',
       token: {},
       price: form.price,
@@ -43,16 +43,12 @@ const onSubmit = async () => {
     };
     const ImageData = new FormData();
     ImageData.append('file', form.file as unknown as File);
-    let answer = await $fetch('/api/upload-file-ipfs', {
+    const ipfs_answer = await $fetch('/api/upload-file-ipfs', {
       method: 'POST',
       body: ImageData,
     });
-    if (answer.status === 500)
-      throw new Error(
-        'An error occurred while uploading the file:' + answer.data,
-      );
-    listing.ipfs_hash = answer.data;
-    answer = await $fetch('/api/create-listing', {
+    listing.ipfs_hash = ipfs_answer;
+    await $fetch('/api/create-listing', {
       method: 'POST',
       body: JSON.stringify(listing),
     });

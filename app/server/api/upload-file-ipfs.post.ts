@@ -1,11 +1,11 @@
 export const UploadToIpfs = async (
-  data: any,
+  data: Buffer,
   type_file: string,
 ): Promise<string> => {
   try {
     const config = useRuntimeConfig();
     const ImageData = new FormData();
-    ImageData.append('file', new Blob([data.data], {type: type_file}));
+    ImageData.append('file', new Blob([data], {type: type_file}));
     const pinataMetadata = JSON.stringify({
       name: 'Listing Image',
     });
@@ -23,24 +23,15 @@ export const UploadToIpfs = async (
     throw new Error('Error uploading to pinata:' + error.message);
   }
 };
-export default defineEventHandler(
-  async (event): Promise<t_apiAnswer<string>> => {
-    try {
-      const mFormData = await readMultipartFormData(event);
-      if (!mFormData) throw new Error('No data found');
-      const file = mFormData?.find((item) => item.name == 'file');
-      if (!file) throw new Error('File not found');
-      const ipfs_answer = await UploadToIpfs(file, file.type as string);
-      return {
-        status: 200,
-        data: ipfs_answer,
-      };
-    } catch (e) {
-      const error = e as Error;
-      return {
-        status: 500,
-        data: error.message,
-      };
-    }
-  },
-);
+export default defineEventHandler(async (event): Promise<string> => {
+  try {
+    const mFormData = await readMultipartFormData(event);
+    if (!mFormData) throw new Error('No data found');
+    const file = mFormData?.find((item) => item.name == 'file');
+    if (!file) throw new Error('File not found');
+    return await UploadToIpfs(file.data, file.type as string);
+  } catch (e) {
+    const error = e as Error;
+    throw new Error('error in upload-file-ipfs: ' + error.message);
+  }
+});
