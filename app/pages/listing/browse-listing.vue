@@ -35,7 +35,7 @@ const {
               {{ new Date(listing.created_at).toLocaleDateString() }}
             </div>
             <div class="listing-price">Price: ${{ listing.price }}</div>
-            <img :src="getImgLink(listing)" >
+            <NuxtImg :src="getImgLink(listing)" />
             <template #footer>
               <ULink :to="`/listing/${listing.id}`">
                 <UButton>View Details</UButton>

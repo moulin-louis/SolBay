@@ -94,7 +94,7 @@ const handleBuy = async () => {
         <UCard>
           <template #header>
             <div class="card-header">
-              <img :src="getImgLink(listing?.data as t_listing)" >
+              <NuxtImg :src="getImgLink(listing?.data as t_listing)" />
             </div>
           </template>
           <div class="card-content">

@@ -1,4 +1,4 @@
-import type { PublicKey} from '@solana/web3.js';
+import type {PublicKey} from '@solana/web3.js';
 import {Keypair} from '@solana/web3.js';
 import {createQR} from '@solana/pay';
 import type QRCodeStyling from '@solana/qr-code-styling';

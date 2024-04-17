@@ -2,7 +2,13 @@ import * as process from 'process';
 
 export default defineNuxtConfig({
   ssr: false,
-  modules: ['@nuxt/ui', '@nuxt/fonts', '@vueuse/nuxt', '@nuxt/eslint'],
+  modules: [
+    '@nuxt/image',
+    '@nuxt/eslint',
+    '@nuxt/ui',
+    '@nuxt/fonts',
+    '@vueuse/nuxt',
+  ],
   nitro: {
     devStorage: {
       db: {

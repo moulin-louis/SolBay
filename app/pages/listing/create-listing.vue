@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { mixed, number, object, string} from 'yup';
+import {mixed, number, object, string} from 'yup';
 
 import {useWallet} from 'solana-wallets-vue';
 
+const {wallet} = useWallet();
 const file_path = ref<string>();
 const isLoading = ref(false);
+const toast = useToast();
 const form = reactive({
   name: '',
   description: '',
   price: 0,
   file: undefined,
 });
-
-const toast = useToast();
 const schema = object({
   name: string().max(50, 'Name must be less than 50 characters').required(),
   description: string().required(),
@@ -30,7 +30,6 @@ const schema = object({
 const onSubmit = async () => {
   isLoading.value = true;
   try {
-    const {wallet} = useWallet();
     const pub_key = wallet.value?.adapter.publicKey;
     if (!pub_key) throw new Error('Wallet not connected');
     const listing: t_listing = {
@@ -40,6 +39,7 @@ const onSubmit = async () => {
       ipfs_hash: '',
       token: {},
       price: form.price,
+      buyer: null,
     };
     const ImageData = new FormData();
     ImageData.append('file', form.file as unknown as File);
@@ -82,81 +82,86 @@ const handleFileChange = (files: FileList) => {
 </script>
 
 <template>
-  <div class="form-wrapper">
-    <UForm
-      :schema="schema"
-      :state="form"
-      class="form-container"
-      @submit="onSubmit"
-    >
-      <UFormGroup
-        label="File"
-        name="file"
-        description="Image of your product"
-        class="form-group"
+  <div>
+    <div v-if="wallet === null">
+      Please connect your wallet to create a listing
+    </div>
+    <div v-else class="form-wrapper">
+      <UForm
+        :schema="schema"
+        :state="form"
+        class="form-container"
+        @submit="onSubmit"
       >
-        <UInput
-          v-model="file_path"
-          variant="outline"
+        <UFormGroup
+          label="File"
+          name="file"
+          description="Image of your product"
+          class="form-group"
+        >
+          <UInput
+            v-model="file_path"
+            variant="outline"
+            size="md"
+            placeholder="Upload a file"
+            type="file"
+            @change="handleFileChange($event)"
+          />
+        </UFormGroup>
+        <UFormGroup
+          label="Name"
+          name="name"
+          description="Name for your listing"
+          class="form-group"
+        >
+          <UInput
+            v-model="form.name"
+            size="md"
+            variant="outline"
+            placeholder="Listing Name"
+          />
+        </UFormGroup>
+        <UFormGroup
+          label="Description"
+          name="description"
+          description="A little description for your listing"
+          class="form-group"
+        >
+          <UInput
+            v-model="form.description"
+            size="md"
+            variant="outline"
+            placeholder="Listing description"
+          />
+        </UFormGroup>
+        <UFormGroup
+          label="Price"
+          name="price"
+          description="The sell price in token of your listing"
+          class="form-group"
+        >
+          <UInput
+            v-model="form.price"
+            size="md"
+            variant="outline"
+            placeholder="Minimum price (in tokens)"
+          />
+        </UFormGroup>
+        <UButton
+          type="submit"
+          icon="i-heroicons-pencil-square"
+          color="primary"
+          variant="solid"
           size="md"
-          placeholder="Upload a file"
-          type="file"
-          @change="handleFileChange($event)"
-        />
-      </UFormGroup>
-      <UFormGroup
-        label="Name"
-        name="name"
-        description="Name for your listing"
-        class="form-group"
-      >
-        <UInput
-          v-model="form.name"
-          size="md"
-          variant="outline"
-          placeholder="Listing Name"
-        />
-      </UFormGroup>
-      <UFormGroup
-        label="Description"
-        name="description"
-        description="A little description for your listing"
-        class="form-group"
-      >
-        <UInput
-          v-model="form.description"
-          size="md"
-          variant="outline"
-          placeholder="Listing description"
-        />
-      </UFormGroup>
-      <UFormGroup
-        label="Price"
-        name="price"
-        description="The sell price in token of your listing"
-        class="form-group"
-      >
-        <UInput
-          v-model="form.price"
-          size="md"
-          variant="outline"
-          placeholder="Minimum price (in tokens)"
-        />
-      </UFormGroup>
-      <UButton
-        type="submit"
-        icon="i-heroicons-pencil-square"
-        color="primary"
-        variant="solid"
-        size="md"
-        :ui="{rounded: 'rounded-full'}"
-        block
-        :disabled="isLoading"
-        :loading="isLoading"
-      >
-        {{ isLoading ? 'Loading...' : 'Submit' }}
-      </UButton>
-    </UForm>
+          :ui="{rounded: 'rounded-full'}"
+          block
+          :disabled="isLoading"
+          :loading="isLoading"
+        >
+          {{ isLoading ? 'Loading...' : 'Submit' }}
+        </UButton>
+      </UForm>
+    </div>
   </div>
 </template>
 

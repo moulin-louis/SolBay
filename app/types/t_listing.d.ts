@@ -1,3 +1,5 @@
+import type {PublicKey} from '@solana/web3.js';
+
 export {t_listing};
 
 declare global {
@@ -12,5 +14,6 @@ declare global {
     ipfs_hash: string; //hash of the image
     token: t_token; //token struct
     price: number; //price in chosen token (min price for listing, buy now price for normal listing)
+    buyer: PublicKey | null; //address of the buyer
   };
 }
