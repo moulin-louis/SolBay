@@ -20,6 +20,7 @@ export const GenerateQRCode = async (
     body: {
       recipient: recipient.toBase58(), // who whill receive the payment
       amount: listing.price,
+      splToken: listing.token.address,
       reference: wallet.publicKey.toBase58(), // who will pay
       message: 'Buy item: ' + listing.name,
       memo: 'TOTO',

@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import {mixed, number, object, string} from 'yup';
-// import {useTokens} from '~/composables/useTokens';
-
+import {useTokens} from '~/composables/useTokens';
 import {useWallet} from 'solana-wallets-vue';
 
 const {wallet} = useWallet();
+const tokens = await useTokens();
+const {list, containerProps, wrapperProps} = useVirtualList(Array.from(tokens.value), {
+  itemHeight: 22,
+});
+const selectedToken = ref(tokens.value[0]);
 const file_path = ref<string>();
 const isLoading = ref(false);
 const toast = useToast();
@@ -28,6 +32,10 @@ const schema = object({
     .required(),
 });
 
+watch(selectedToken, (newToken: t_token): void => {
+  form.token = newToken;
+});
+
 const onSubmit = async () => {
   isLoading.value = true;
   try {
@@ -38,7 +46,7 @@ const onSubmit = async () => {
       description: form.description,
       seller: pub_key.toString(),
       ipfs_hash: '',
-      token: {},
+      token: selectedToken.value,
       price: form.price,
       buyer: null,
     };
@@ -114,7 +122,22 @@ const handleFileChange = (files: FileList) => {
           name="token"
           description="The token you want to sell your listing in"
           class="form-group"
-        />
+        >
+          <div v-bind="containerProps" style="height: 300px">
+            <div v-bind="wrapperProps">
+              <div
+                v-for="item in list"
+                :key="item.data.name"
+                style="height: 22px; cursor: pointer"
+                @click="selectedToken = item.data"
+              >
+                <span :class="{'selected-token': selectedToken === item.data}">
+                  {{ item.data.name }} : $ {{ item.data.symbol }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </UFormGroup>
         <UFormGroup
           label="Price"
           name="price"
@@ -123,7 +146,6 @@ const handleFileChange = (files: FileList) => {
         >
           <UInput
             v-model="form.price"
-            type="number"
             size="md"
             variant="outline"
             placeholder="Minimum price (in tokens)"
@@ -155,7 +177,6 @@ const handleFileChange = (files: FileList) => {
   min-height: 100vh;
   background-color: #f0f0f0;
 }
-
 .form-container {
   display: flex;
   flex-direction: column;
@@ -166,9 +187,12 @@ const handleFileChange = (files: FileList) => {
   width: 100%;
   max-width: 37.5rem; /* equivalent to 600px */
 }
-
 .form-group {
   margin-bottom: 1.25rem; /* equivalent to 20px */
   width: 100%;
+}
+.selected-token {
+  background-color: #f0f0f0; /* Light grey background for the selected token */
+  font-weight: bold;
 }
 </style>

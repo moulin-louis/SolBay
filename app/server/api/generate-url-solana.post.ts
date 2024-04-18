@@ -10,10 +10,10 @@ export const encodeURL = ({
   message,
   memo,
 }: {
-  recipient: string;
+  recipient: string; //to base58
   amount: BigNumber;
-  splToken?: string;
-  reference: string;
+  splToken?: string; // optional spl token address
+  reference: string; //to base58
   label: string;
   message: string;
   memo: string;
@@ -34,11 +34,12 @@ export default defineEventHandler(async (event): Promise<URL> => {
     if (!body) throw new Error('No body');
     const requiredParams = ['recipient', 'amount', 'reference', 'message', 'memo'];
     checkMissingParams(body, requiredParams);
-    const {recipient, amount, reference, message, memo} = body;
+    const {recipient, amount, splToken, reference, message, memo} = body;
     const label = 'SolBay';
     const url = encodeURL({
       recipient,
       amount: new BigNumber(amount),
+      splToken,
       reference,
       label,
       message,

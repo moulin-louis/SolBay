@@ -12,10 +12,9 @@ const listing: t_listing = props.listing;
     </template>
     <div class="listing-description">{{ listing.description }}</div>
     <div class="listing-date">
-      Listing date:
-      {{ new Date(listing.created_at).toLocaleDateString() }}
+      Listing date: {{ new Date(listing.created_at).toLocaleDateString() }}
     </div>
-    <div class="listing-price">Price: ${{ listing.price }}</div>
+    <div class="listing-price">Price: ${{ listing.price }} {{ listing.token.symbol }}</div>
     <NuxtImg :src="getImgLink(listing)" />
     <template #footer>
       <ULink :to="`/listing/${listing.id}`">

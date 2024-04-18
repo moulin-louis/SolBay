@@ -40,10 +40,7 @@ const handleBuy = async () => {
   try {
     isBuying.value = true;
     statusBuy.value = 'generatingQR';
-    const {qr_code, reference} = await GenerateQRCode(
-      listing.value as unknown as t_listing,
-      recipient,
-    );
+    const {qr_code, reference} = await GenerateQRCode(listing.value as t_listing, recipient);
     statusBuy.value = 'generatedQR';
     await nextTick();
     qr_code.append(document.getElementById('qr-code') as HTMLElement | undefined);
@@ -53,7 +50,8 @@ const handleBuy = async () => {
 
     await validateTransfer(connection, signatureInfo?.signature as string, {
       recipient,
-      amount: new BigNumber(listing.value?.price),
+      amount: new BigNumber(listing.value?.price as number),
+      splToken: new PublicKey(listing.value?.token.address),
       reference,
       memo: 'TOTO',
     });

@@ -1,4 +1,4 @@
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event): Promise<void> => {
   try {
     const body = await readBody(event);
     if (!body) throw new Error('No body provided');

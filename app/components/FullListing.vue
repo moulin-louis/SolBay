@@ -22,7 +22,7 @@ const listing: t_listing = props.listing;
     <template #footer>
       <div class="card-footer">
         <div>
-          <div class="listing-price">Price: ${{ listing.price }}</div>
+          <div class="listing-price">Price: ${{ listing.price }} $ {{ listing.token.symbol }}</div>
         </div>
       </div>
       <slot />
