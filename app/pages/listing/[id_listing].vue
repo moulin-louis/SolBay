@@ -1,15 +1,15 @@
 <script lang="ts" setup>
 import {Connection, PublicKey} from '@solana/web3.js';
-import {validateTransfer} from '@solana/pay';
-import {FindReferenceError} from '~/composables/findReference';
 import BigNumber from 'bignumber.js';
 import {useWallet} from 'solana-wallets-vue';
+import {findReference, FindReferenceError, validateTransfer} from '@solana/pay';
 
 const wallet = useWallet();
 const toast = useToast();
 const route = useRoute();
 const config = useRuntimeConfig();
 const recipient = new PublicKey(config.public.RECIPIENT_PUBLIC_KEY);
+//try with token PDA address
 const isBuying = ref(false);
 const statusBuy = ref('');
 const {
@@ -24,9 +24,10 @@ const {
 const pollForSignature = async (connection: Connection, reference: PublicKey) => {
   for (let i = 0; i < 60; i++) {
     try {
-      return await findReference(connection, reference, 'finalized');
+      return await findReference(connection, reference, {finality: 'confirmed'});
     } catch (e) {
       if (e instanceof FindReferenceError) {
+        console.log('nothing found, retry in 1 sec');
         await new Promise((resolve) => setTimeout(resolve, 1000));
         continue;
       }
@@ -41,20 +42,25 @@ const handleBuy = async () => {
     isBuying.value = true;
     statusBuy.value = 'generatingQR';
     const {qr_code, reference} = await GenerateQRCode(listing.value as t_listing, recipient);
+    console.log('reference', reference.toString());
     statusBuy.value = 'generatedQR';
     await nextTick();
     qr_code.append(document.getElementById('qr-code') as HTMLElement | undefined);
     const connection = new Connection(config.public.SOLANA_DEVNET_RPC, 'confirmed');
     const signatureInfo = await pollForSignature(connection, reference);
     if (!signatureInfo) throw new Error('Payment not confirmed');
-
-    await validateTransfer(connection, signatureInfo?.signature as string, {
-      recipient,
-      amount: new BigNumber(listing.value?.price as number),
-      splToken: new PublicKey(listing.value?.token.address),
-      reference,
-      memo: 'TOTO',
-    });
+    await validateTransfer(
+      connection,
+      signatureInfo?.signature as string,
+      {
+        recipient,
+        amount: new BigNumber(listing.value?.price as number),
+        splToken: new PublicKey(listing.value?.token.address as string),
+        reference,
+        memo: 'TOTO',
+      },
+      {commitment: 'confirmed'},
+    );
     statusBuy.value = 'paymentConfirmed';
     await $fetch('/api/close-listing', {
       method: 'POST',

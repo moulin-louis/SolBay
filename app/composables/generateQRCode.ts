@@ -1,5 +1,4 @@
-import type {PublicKey} from '@solana/web3.js';
-import {Keypair} from '@solana/web3.js';
+import {PublicKey, Keypair} from '@solana/web3.js';
 import {createQR} from '@solana/pay';
 import type QRCodeStyling from '@solana/qr-code-styling';
 
@@ -10,17 +9,15 @@ interface t_return {
 
 export const GenerateQRCode = async (
   listing: t_listing,
-  recipient: PublicKey,
+  recipient: PublicKey, //merchent address
 ): Promise<t_return> => {
   const wallet = new Keypair();
-  if (listing === undefined || typeof listing === 'string') throw new Error('Listing is undefined');
-  console.log('recipient = ', recipient);
   const res = await $fetch('/api/generate-url-solana', {
     method: 'POST',
     body: {
       recipient: recipient.toBase58(), // who whill receive the payment
       amount: listing.price,
-      splToken: listing.token.address,
+      splToken: new PublicKey(listing.token.address as string).toBase58(),
       reference: wallet.publicKey.toBase58(), // who will pay
       message: 'Buy item: ' + listing.name,
       memo: 'TOTO',
