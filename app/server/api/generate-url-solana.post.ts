@@ -1,6 +1,5 @@
 import BigNumber from 'bignumber.js';
 import {checkMissingParams} from '../utils/checkMissingParams';
-import {PublicKey} from '@solana/web3.js';
 
 export const encodeURL = ({
   recipient,

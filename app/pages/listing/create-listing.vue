@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {mixed, number, object, string} from 'yup';
-import {useTokens} from '~/composables/useTokens';
+// import {useTokens} from '~/composables/useTokens';
 
 import {useWallet} from 'solana-wallets-vue';
 
@@ -114,8 +114,7 @@ const handleFileChange = (files: FileList) => {
           name="token"
           description="The token you want to sell your listing in"
           class="form-group"
-        >
-        </UFormGroup>
+        />
         <UFormGroup
           label="Price"
           name="price"
