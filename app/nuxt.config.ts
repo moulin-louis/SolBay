@@ -4,6 +4,11 @@ export default defineNuxtConfig({
   ssr: false,
   modules: ['@nuxt/image', '@nuxt/eslint', '@nuxt/ui', '@nuxt/fonts', '@vueuse/nuxt'],
   nitro: {
+    storage: {
+      db: {
+        driver: 'vercelKV',
+      },
+    },
     devStorage: {
       db: {
         driver: 'fs',

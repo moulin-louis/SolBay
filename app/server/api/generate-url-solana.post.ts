@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js';
 import {checkMissingParams} from '../utils/checkMissingParams';
-import { PublicKey } from '@solana/web3.js';
+import {PublicKey} from '@solana/web3.js';
 
 export const encodeURL = ({
   recipient,
@@ -35,7 +35,7 @@ export default defineEventHandler(async (event): Promise<URL> => {
     if (!body) throw new Error('No body');
     const requiredParams = ['recipient', 'amount', 'reference', 'message', 'memo'];
     checkMissingParams(body, requiredParams);
-    const { recipient, amount, reference, message, memo } = body;
+    const {recipient, amount, reference, message, memo} = body;
     const label = 'SolBay';
     const url = encodeURL({
       recipient,

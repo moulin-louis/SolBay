@@ -115,7 +115,6 @@ const handleFileChange = (files: FileList) => {
           description="The token you want to sell your listing in"
           class="form-group"
         >
-          
         </UFormGroup>
         <UFormGroup
           label="Price"
