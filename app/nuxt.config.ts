@@ -1,4 +1,4 @@
-import * as process from 'node:process'
+import * as process from 'node:process';
 
 export default defineNuxtConfig({
   ssr: true,
@@ -60,4 +60,4 @@ export default defineNuxtConfig({
     primary: 'green',
     gray: 'cool',
   },
-})
+});
