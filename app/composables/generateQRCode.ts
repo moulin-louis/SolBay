@@ -1,4 +1,4 @@
-import {Keypair, PublicKey} from '@solana/web3.js';
+import {Keypair, type PublicKey} from '@solana/web3.js';
 import {createQR} from '@solana/pay';
 import type QRCodeStyling from '@solana/qr-code-styling';
 
@@ -12,10 +12,10 @@ export async function GenerateQRCode(listing: t_listing, recipient: PublicKey): 
   const res = await $fetch('/api/generate-url-solana', {
     method: 'POST',
     body: {
-      recipient: recipient.toBase58(), // who whill receive the payment
+      recipient: recipient, // who whill receive the payment
       amount: listing.price,
-      splToken: new PublicKey(listing.token.address as string).toBase58(),
-      reference: wallet.publicKey.toBase58(), // who will pay
+      splToken: listing.token.address,
+      reference: wallet.publicKey, // random generated wallet
       message: `Buy item: ${listing.name}`,
       memo: 'TOTO',
     },

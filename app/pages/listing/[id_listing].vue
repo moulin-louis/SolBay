@@ -1,17 +1,22 @@
 <script lang="ts" setup>
-import {Connection, PublicKey} from '@solana/web3.js';
-import BigNumber from 'bignumber.js';
+import {PublicKey} from '@solana/web3.js';
 import {useWallet} from 'solana-wallets-vue';
-import {findReference, FindReferenceError, validateTransfer} from '@solana/pay';
 
-const wallet = useWallet();
-const toast = useToast();
-const route = useRoute();
+enum StatusBuy {
+  waitingUserInput = 'waitingUserInput',
+  GeneratingQR = 'generatingQR',
+  GeneratedQR = 'generatedQR',
+  PaymentConfirmed = 'paymentConfirmed',
+  ItemSold = 'itemSold',
+}
+
+const wallet = useWallet(); //user wallet
+const toast = useToast(); //toast notification
+const route = useRoute(); //route params
 const config = useRuntimeConfig();
-const recipient = new PublicKey(config.public.RECIPIENT_PUBLIC_KEY);
-//try with token PDA address
-const isBuying = ref(false);
-const statusBuy = ref('');
+const recipient = new PublicKey(config.public.RECIPIENT_PUBLIC_KEY); //wallet that recv the payment
+const isBuying = ref(false); // boolean to check if the user is in the process of buying
+const statusBuy = ref<StatusBuy>(StatusBuy.waitingUserInput); // status of the buy process
 const {
   data: listing,
   pending,
@@ -21,55 +26,34 @@ const {
   body: JSON.stringify({id: route.params.id_listing}),
 });
 
-const pollForSignature = async (connection: Connection, reference: PublicKey) => {
-  for (let i = 0; i < 60; i++) {
-    try {
-      return await findReference(connection, reference, {finality: 'confirmed'});
-    } catch (e) {
-      if (e instanceof FindReferenceError) {
-        console.log('nothing found, retry in 1 sec');
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        continue;
-      }
-      throw e;
-    }
-  }
-  return null;
-};
-
 const handleBuy = async () => {
   try {
     isBuying.value = true;
-    statusBuy.value = 'generatingQR';
+    statusBuy.value = StatusBuy.GeneratingQR;
     const {qr_code, reference} = await GenerateQRCode(listing.value as t_listing, recipient);
     console.log('reference', reference.toString());
-    statusBuy.value = 'generatedQR';
+    statusBuy.value = StatusBuy.GeneratedQR;
     await nextTick();
     qr_code.append(document.getElementById('qr-code') as HTMLElement | undefined);
-    const connection = new Connection(config.public.SOLANA_DEVNET_RPC, 'confirmed');
-    const signatureInfo = await pollForSignature(connection, reference);
-    if (!signatureInfo) throw new Error('Payment not confirmed');
-    await validateTransfer(
-      connection,
-      signatureInfo?.signature as string,
-      {
+    const res = await $fetch('/api/wait-payement', {
+      method: 'POST',
+      body: JSON.stringify({
         recipient,
-        amount: new BigNumber(listing.value?.price as number),
-        splToken: new PublicKey(listing.value?.token.address as string),
-        reference,
-        memo: 'TOTO',
-      },
-      {commitment: 'confirmed'},
-    );
-    statusBuy.value = 'paymentConfirmed';
+        amount: listing.value?.price,
+        splToken: listing.value?.token.address,
+        reference: reference,
+      }),
+    });
+    console.log('res = ', res);
+    statusBuy.value = StatusBuy.PaymentConfirmed;
     await $fetch('/api/close-listing', {
       method: 'POST',
       body: JSON.stringify({
         id: listing.value?.id,
-        buyer: wallet.publicKey.value?.toString(),
+        buyer: wallet.publicKey.value,
       }),
     });
-    statusBuy.value = 'itemSold';
+    statusBuy.value = StatusBuy.ItemSold;
     toast.add({
       id: 'success-notification',
       title: 'Payment confirmed',
@@ -90,7 +74,7 @@ const handleBuy = async () => {
     throw error;
   } finally {
     isBuying.value = false;
-    statusBuy.value = '';
+    statusBuy.value = StatusBuy.waitingUserInput;
   }
 };
 </script>
@@ -113,10 +97,10 @@ const handleBuy = async () => {
               <div class="card-header">
                 <div class="card-title">Buying this item...</div>
                 <div v-if="wallet === null">Please Connect your wallet first</div>
-                <div v-else-if="statusBuy === 'generatingQR'">
+                <div v-else-if="statusBuy === StatusBuy.GeneratingQR">
                   Please wait till we generate the QR code for you
                 </div>
-                <div v-else-if="statusBuy === 'generatedQR'" id="qr-code" />
+                <div v-else-if="statusBuy === StatusBuy.GeneratedQR" id="qr-code" />
                 <div v-else>Payement confirmed!</div>
               </div>
             </UCard>
