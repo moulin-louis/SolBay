@@ -1,6 +1,7 @@
 {
   "name": "nuxt-app",
   "type": "module",
+  "license": "UNLICENSED",
   "private": true,
   "scripts": {
     "build": "nuxt build",
