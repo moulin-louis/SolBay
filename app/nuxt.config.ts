@@ -1,4 +1,4 @@
-import * as process from 'process';
+import * as process from 'node:process'
 
 export default defineNuxtConfig({
   ssr: true,
@@ -51,9 +51,13 @@ export default defineNuxtConfig({
   typescript: {
     includeWorkspace: true,
   },
-  eslint: {},
+  eslint: {
+    config: {
+      standalone: false, // <---
+    },
+  },
   ui: {
     primary: 'green',
     gray: 'cool',
   },
-});
+})
