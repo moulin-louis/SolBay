@@ -51,11 +51,7 @@ export default defineNuxtConfig({
   typescript: {
     includeWorkspace: true,
   },
-  eslint: {
-    config: {
-      standalone: false, // <---
-    },
-  },
+  eslint: {},
   ui: {
     primary: 'green',
     gray: 'cool',
