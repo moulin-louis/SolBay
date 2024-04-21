@@ -31,7 +31,6 @@ const handleBuy = async () => {
     isBuying.value = true;
     statusBuy.value = StatusBuy.GeneratingQR;
     const {qr_code, reference} = await GenerateQRCode(listing.value as t_listing, recipient);
-    console.log('reference', reference.toString());
     statusBuy.value = StatusBuy.GeneratedQR;
     await nextTick();
     qr_code.append(document.getElementById('qr-code') as HTMLElement | undefined);
