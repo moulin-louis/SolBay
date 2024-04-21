@@ -1,5 +1,7 @@
 <script lang="ts" setup>
-import {PublicKey} from '@solana/web3.js';
+import {FindReferenceError, findReference, validateTransfer} from '@solana/pay';
+import {Connection, PublicKey, type ConfirmedSignatureInfo} from '@solana/web3.js';
+import BigNumber from 'bignumber.js';
 import {useWallet} from 'solana-wallets-vue';
 
 enum StatusBuy {
@@ -26,24 +28,54 @@ const {
   body: JSON.stringify({id: route.params.id_listing}),
 });
 
+const pollForSignature = async (
+  connection: Connection,
+  reference: PublicKey,
+): Promise<ConfirmedSignatureInfo | null> => {
+  for (let i = 0; i < 60; i++) {
+    try {
+      return await findReference(connection, reference, {finality: 'confirmed'});
+    } catch (e) {
+      if (e instanceof FindReferenceError) {
+        console.log('nothing found, retry in 1 sec');
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        continue;
+      }
+      throw e;
+    }
+  }
+  return null;
+};
+
 const handleBuy = async () => {
   try {
     isBuying.value = true;
     statusBuy.value = StatusBuy.GeneratingQR;
-    const {qr_code, reference} = await GenerateQRCode(listing.value as t_listing, recipient);
+    const {qr_code, reference_address} = await GenerateQRCode(
+      listing.value as t_listing,
+      recipient,
+    );
+    const reference = new PublicKey(reference_address);
     statusBuy.value = StatusBuy.GeneratedQR;
     await nextTick();
     qr_code.append(document.getElementById('qr-code') as HTMLElement | undefined);
-    const res = await $fetch('/api/wait-payement', {
-      method: 'POST',
-      body: JSON.stringify({
+    const connection: Connection = new Connection(config.public.SOLANA_DEVNET_RPC, 'confirmed');
+    const signatureInfo = await pollForSignature(connection, reference);
+    if (!signatureInfo) throw new Error('Payment not confirmed');
+    await validateTransfer(
+      connection,
+      signatureInfo?.signature as string,
+      {
         recipient,
-        amount: listing.value?.price,
-        splToken: listing.value?.token.address,
-        reference: reference,
-      }),
-    });
-    console.log('res = ', res);
+        amount: new BigNumber(listing.value?.price as number),
+        splToken: listing.value?.token
+          ? new PublicKey(listing.value?.token.address as string)
+          : undefined,
+        reference,
+        memo: 'Buying-Item',
+      },
+      {commitment: 'confirmed'},
+    );
     statusBuy.value = StatusBuy.PaymentConfirmed;
     await $fetch('/api/close-listing', {
       method: 'POST',

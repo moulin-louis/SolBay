@@ -32,7 +32,7 @@ export default defineEventHandler(
         url: encodeURL({
           recipient: new PublicKey(recipient),
           amount: new BigNumber(amount),
-          splToken: new PublicKey(splToken),
+          splToken: splToken ? new PublicKey(splToken) : undefined,
           reference: reference.publicKey,
           label: 'SolBay',
           message,

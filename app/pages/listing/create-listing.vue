@@ -5,10 +5,11 @@ import {useWallet} from 'solana-wallets-vue';
 
 const {wallet} = useWallet();
 const tokens = await useTokens();
+tokens.value.unshift({name: 'Solana (Recommended)', symbol: 'SOL', address: 'SOL'}); //adding base sol token
 const {list, containerProps, wrapperProps} = useVirtualList(Array.from(tokens.value), {
   itemHeight: 22,
 });
-const selectedToken = ref(tokens.value[0]);
+const selectedToken = ref<t_token>();
 const file_path = ref<string>();
 const isLoading = ref(false);
 const toast = useToast();
@@ -16,7 +17,6 @@ const form = reactive({
   file: undefined,
   name: '',
   description: '',
-  token: {},
   price: 0,
 });
 const schema = object({
@@ -31,11 +31,7 @@ const schema = object({
     )
     .required(),
 });
-
-watch(selectedToken, (newToken: t_token): void => {
-  form.token = newToken;
-});
-
+const isOpen = ref(false);
 const onSubmit = async () => {
   isLoading.value = true;
   try {
@@ -46,9 +42,12 @@ const onSubmit = async () => {
       description: form.description,
       seller: pub_key.toString(),
       ipfs_hash: '',
-      token: selectedToken.value,
+      //if user choose solana token, we set the token info to null
+      token: selectedToken.value.address === 'SOL' ? null : selectedToken.value,
       price: form.price,
       buyer: null,
+      id: '0',
+      created_at: '0',
     };
     const ImageData = new FormData();
     ImageData.append('file', form.file as unknown as File);
@@ -123,19 +122,37 @@ const handleFileChange = (files: FileList) => {
           description="The token you want to sell your listing in"
           class="form-group"
         >
-          <div v-bind="containerProps" style="height: 300px">
-            <div v-bind="wrapperProps">
-              <div
-                v-for="item in list"
-                :key="item.data.name"
-                style="height: 22px; cursor: pointer"
-                @click="selectedToken = item.data"
-              >
-                <span :class="{'selected-token': selectedToken === item.data}">
-                  {{ item.data.name }} : $ {{ item.data.symbol }}
-                </span>
+          <UButton
+            label="Choose a Token"
+            @click="
+              () => {
+                isOpen = true;
+                selectedToken = undefined;
+              }
+            "
+          />
+          <div v-if="!selectedToken">
+            <UModal v-model="isOpen">
+              <div v-bind="containerProps" style="height: 300px">
+                <div v-bind="wrapperProps">
+                  <div
+                    v-for="item in list"
+                    :key="item.data.name"
+                    style="height: 22px; cursor: pointer"
+                    @click="selectedToken = item.data"
+                  >
+                    <span :class="{'selected-token': selectedToken === item.data}">
+                      {{ item.data.name }} : $ {{ item.data.symbol }}
+                    </span>
+                  </div>
+                </div>
               </div>
-            </div>
+            </UModal>
+          </div>
+          <div v-else>
+            <span class="selected-token"
+              >Token choosed: {{ selectedToken.name }} : $ {{ selectedToken.symbol }}</span
+            >
           </div>
         </UFormGroup>
         <UFormGroup

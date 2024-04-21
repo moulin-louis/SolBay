@@ -5,7 +5,7 @@ export default defineEventHandler(async (event): Promise<t_listing[]> => {
     const body = await readBody(event);
     if (!body) throw new Error('Empty body');
     const buyer = body.buyer;
-    if (!buyer || typeof buyer !== 'string') throw new Error('Invalid seller');
+    if (!buyer) throw new Error('Invalid seller');
     const listings = await fetchAllListing();
     return listings.filter((listing) => listing.buyer === buyer);
   } catch (e) {

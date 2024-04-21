@@ -4,7 +4,7 @@ import type QRCodeStyling from '@solana/qr-code-styling';
 
 interface t_return {
   qr_code: QRCodeStyling;
-  reference: PublicKey;
+  reference_address: PublicKey;
 }
 
 export async function GenerateQRCode(listing: t_listing, recipient: PublicKey): Promise<t_return> {
@@ -13,14 +13,12 @@ export async function GenerateQRCode(listing: t_listing, recipient: PublicKey): 
     body: {
       recipient: recipient, // who whill receive the payment
       amount: listing.price,
-      splToken: listing.token.address,
+      splToken: listing.token ? listing.token.address : null,
       message: `Buy item: ${listing.name}`,
-      memo: 'TOTO',
+      memo: 'Buying-Item',
     },
   });
   const url_solana: URL = res.url;
-  const reference: PublicKey = res.reference;
-  console.log('url_solana', url_solana);
-  console.log('reference', reference);
-  return {qr_code: createQR(url_solana), reference};
+  const reference_address: PublicKey = res.reference;
+  return {qr_code: createQR(url_solana), reference_address};
 }

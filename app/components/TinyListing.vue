@@ -14,7 +14,9 @@ const listing: t_listing = props.listing;
     <div class="listing-date">
       Listing date: {{ new Date(listing.created_at).toLocaleDateString() }}
     </div>
-    <div class="listing-price">Price: ${{ listing.price }} {{ listing.token.symbol }}</div>
+    <div class="listing-price">
+      Price: ${{ listing.price }} {{ listing.token ? listing.token.symbol : '$SOL' }}
+    </div>
     <NuxtImg :src="getImgLink(listing)" />
     <template #footer>
       <ULink :to="`/listing/${listing.id}`">

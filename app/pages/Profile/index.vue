@@ -2,7 +2,6 @@
 import {useWallet} from 'solana-wallets-vue';
 
 const wallet = useWallet();
-console.log('wallet', wallet);
 const {
   data: listings,
   refresh,
@@ -14,6 +13,7 @@ const {
     buyer: wallet.publicKey.value?.toString(),
   },
 });
+await nextTick();
 </script>
 
 <template>

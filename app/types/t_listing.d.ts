@@ -10,7 +10,7 @@ declare global {
     description: string; //description of the listing
     seller: string; //address of the seller
     ipfs_hash: string; //hash of the image
-    token: t_token; //token struct
+    token: t_token | null; //token struct
     price: number; //price in chosen token (min price for listing, buy now price for normal listing)
     buyer: string | null; //address of the buyer
   };
