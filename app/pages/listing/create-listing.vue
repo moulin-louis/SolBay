@@ -1,28 +1,22 @@
 <script setup lang="ts">
 import {mixed, number, object, string} from 'yup';
-import {useTokens} from '~/composables/useTokens';
 import {useWallet} from 'solana-wallets-vue';
+import {PublicKey} from '@solana/web3.js';
 
-const {wallet} = useWallet();
-const tokens = await useTokens();
-tokens.value.unshift({name: 'Solana (Recommended)', symbol: 'SOL', address: 'SOL'}); //adding base sol token
-const {list, containerProps, wrapperProps} = useVirtualList(Array.from(tokens.value), {
-  itemHeight: 22,
-});
-const selectedToken = ref<t_token>();
-const file_path = ref<string>();
 const isLoading = ref(false);
+const isOpen = ref(false);
+const {wallet} = useWallet();
 const toast = useToast();
+const selectedToken = ref<t_token | null>(null);
+const prevListingAddress = ref<string | null>(null);
 const form = reactive({
   file: undefined,
   name: '',
   description: '',
   price: 0,
 });
+const file_path = ref<string>();
 const schema = object({
-  name: string().max(50, 'Name must be less than 50 characters').required(),
-  description: string().required(),
-  price: number().required(),
   file: mixed()
     .test(
       'fileType',
@@ -30,58 +24,36 @@ const schema = object({
       (value) => !value || (value && ['image/jpeg', 'image/png'].includes(value.type)),
     )
     .required(),
+  name: string().max(50, 'Name must be less than 50 characters').required(),
+  description: string().required(),
+  price: number().required(),
 });
-const isOpen = ref(false);
+
 const onSubmit = async () => {
-  isLoading.value = true;
-  try {
-    const pub_key = wallet.value?.adapter.publicKey;
-    if (!pub_key) throw new Error('Wallet not connected');
-    const listing: t_listing = {
-      name: form.name,
-      description: form.description,
-      seller: pub_key.toString(),
-      ipfs_hash: '',
-      //if user choose solana token, we set the token info to null
-      token: selectedToken.value.address === 'SOL' ? null : selectedToken.value,
-      price: form.price,
-      buyer: null,
-      id: '0',
-      created_at: '0',
-    };
-    const ImageData = new FormData();
-    ImageData.append('file', form.file as unknown as File);
-    const ipfs_answer = await $fetch('/api/upload-file-ipfs', {
-      method: 'POST',
-      body: ImageData,
-    });
-    listing.ipfs_hash = ipfs_answer;
-    await $fetch('/api/create-listing', {
-      method: 'POST',
-      body: JSON.stringify(listing),
-    });
-    toast.add({
-      id: 'success-notification',
-      title: 'Listing Created !',
-      icon: 'i-material-symbols-check-circle-outline',
-    });
-    console.log('Listing created');
-  } catch (e) {
-    const error = e as Error;
-    toast.add({
-      id: 'error-notification',
-      title: 'An error occurred while creating the listing',
-      description: error.message,
-      icon: '',
-      color: 'red',
-    });
-  } finally {
-    isLoading.value = false;
+  if (prevListingAddress.value) {
+    try {
+      if (prevListingAddress.value.length !== 44) throw new Error('Invalid Lenght address');
+      new PublicKey(prevListingAddress.value);
+    } catch (error) {
+      console.log('error', error);
+      toast.add({
+        id: 'error',
+        title: 'Error',
+        description: 'Please provide a valid previous listing address',
+      });
+      return;
+    }
   }
+  console.log('creation listing...');
+  await handleCreateListing(form, selectedToken.value, prevListingAddress.value, isLoading);
 };
 const handleFileChange = (files: FileList) => {
   if (files.length === 0) return;
-  form.file = files[0];
+  form.file = files[0] as unknown as undefined;
+};
+const onTokenClick = () => {
+  isOpen.value = true;
+  selectedToken.value = null;
 };
 </script>
 
@@ -122,32 +94,13 @@ const handleFileChange = (files: FileList) => {
           description="The token you want to sell your listing in"
           class="form-group"
         >
-          <UButton
-            label="Choose a Token"
-            @click="
-              () => {
-                isOpen = true;
-                selectedToken = undefined;
-              }
-            "
-          />
+          <UButton label="Choose a Token" @click="onTokenClick" />
           <div v-if="!selectedToken">
-            <UModal v-model="isOpen">
-              <div v-bind="containerProps" style="height: 300px">
-                <div v-bind="wrapperProps">
-                  <div
-                    v-for="item in list"
-                    :key="item.data.name"
-                    style="height: 22px; cursor: pointer"
-                    @click="selectedToken = item.data"
-                  >
-                    <span :class="{'selected-token': selectedToken === item.data}">
-                      {{ item.data.name }} : $ {{ item.data.symbol }}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </UModal>
+            <ListToken
+              :is-open="isOpen"
+              :selected-token="selectedToken"
+              :upadte-selected-token="(token: t_token | null) => (selectedToken = token)"
+            />
           </div>
           <div v-else>
             <span class="selected-token"
@@ -166,6 +119,19 @@ const handleFileChange = (files: FileList) => {
             size="md"
             variant="outline"
             placeholder="Minimum price (in tokens)"
+          />
+        </UFormGroup>
+        <UFormGroup
+          label="Previous Listing"
+          name="prev_listing"
+          description="Did you buy this item from another listing?"
+          class="form-group"
+        >
+          <UInput
+            v-model="prevListingAddress"
+            size="md"
+            variant="outline"
+            placeholder="Previous listing"
           />
         </UFormGroup>
         <UButton

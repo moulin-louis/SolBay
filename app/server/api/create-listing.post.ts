@@ -3,13 +3,19 @@ import {checkMissingParams} from '../utils/checkMissingParams';
 
 export default defineEventHandler(async (event): Promise<string> => {
   try {
-    const listing: t_listing = (await readBody(event)) as t_listing;
+    const body = await readBody(event);
+    const {listing, prevListingAddress} = body;
+    if (!listing) throw new Error('No listing provided');
     const requiredParams = ['name', 'description', 'seller', 'ipfs_hash', 'price'];
     checkMissingParams(listing, requiredParams);
     listing.id = uuidv4();
     listing.created_at = new Date().toISOString();
     await useStorage('db').setItem(listing.id.toString(), listing);
-    return 'Good!';
+    await $fetch('/api/handle-nft-listing', {
+      method: 'POST',
+      body: {listing, prevListingAddress},
+    });
+    return listing.id;
   } catch (e) {
     const error = e as Error;
     throw new Error('error when creating listing:' + error.message);
