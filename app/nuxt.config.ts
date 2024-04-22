@@ -1,5 +1,4 @@
-import * as process from 'node:process';
-
+// import * as process from 'node:process';
 export default defineNuxtConfig({
   ssr: false,
   modules: ['@nuxt/image', '@nuxt/eslint', '@nuxt/ui', '@nuxt/fonts', '@vueuse/nuxt'],
@@ -15,17 +14,8 @@ export default defineNuxtConfig({
         base: './data/db',
       },
     },
-  },
-  vite: {
-    optimizeDeps: {
-      include: [
-        '@coral-xyz/anchor',
-        '@solana/web3.js',
-        'yup',
-        '@solana/pay',
-        'bignumber.js',
-        '@vercel/speed-insights/nuxt',
-      ],
+    experimental: {
+      legacyExternals: true,
     },
   },
   experimental: {
@@ -35,8 +25,10 @@ export default defineNuxtConfig({
     PINATA_JWT: process.env.NUXT_PINATA_JWT,
     PROGRAM_ID: process.env.NUXT_PROGRAM_ID,
     RECIPIENT_PUBLIC_KEY: process.env.NUXT_RECIPIENT_PUBLIC_KEY,
+    RECIPIENT_PRIVATE_KEY: process.env.NUXT_RECIPIENT_PRIVATE_KEY,
     SOLANA_DEVNET_RPC: process.env.NUXT_SOLANA_DEVNET_RPC,
     HELIUS_API_KEY: process.env.NUXT_HELIUS_API_KEY,
+    NFT_STORAGE_API_KEY: process.env.NUXT_NFT_STORAGE_API_KEY,
     public: {
       PROGRAM_ID: process.env.NUXT_PROGRAM_ID,
       RECIPIENT_PUBLIC_KEY: process.env.NUXT_RECIPIENT_PUBLIC_KEY,
@@ -48,9 +40,6 @@ export default defineNuxtConfig({
       enabled: true,
     },
     enabled: true,
-  },
-  typescript: {
-    includeWorkspace: true,
   },
   ui: {
     primary: 'blue',

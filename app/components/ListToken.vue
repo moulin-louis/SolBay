@@ -19,7 +19,6 @@ const isOpen = computed(() => props.isOpen);
 </script>
 
 <template>
-  <div>Test</div>
   <UModal v-model="isOpen">
     <div v-bind="containerProps" style="height: 300px">
       <div v-bind="wrapperProps">

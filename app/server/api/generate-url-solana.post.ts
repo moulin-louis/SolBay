@@ -1,8 +1,7 @@
 import BigNumber from 'bignumber.js';
 import {checkMissingParams} from '../utils/checkMissingParams';
 import {encodeURL} from '@solana/pay';
-// KEKW
-import {Keypair, PublicKey} from '../../node_modules/@solana/web3.js/lib/index.esm.js';
+import {PublicKey, Keypair} from '@solana/web3.js';
 
 type t_paramsURL = {
   recipient: string;
@@ -28,6 +27,7 @@ export default defineEventHandler(
       checkMissingParams(body, requiredParams);
       const {recipient, amount, splToken, message, memo}: t_paramsURL = body;
       const reference = new Keypair();
+      console.log('reference', reference.publicKey.toBase58());
       return {
         url: encodeURL({
           recipient: new PublicKey(recipient),

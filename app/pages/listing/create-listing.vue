@@ -8,12 +8,12 @@ const isOpen = ref(false);
 const {wallet} = useWallet();
 const toast = useToast();
 const selectedToken = ref<t_token | null>(null);
-const prevListingAddress = ref<string | null>(null);
 const form = reactive({
   file: undefined,
   name: '',
   description: '',
   price: 0,
+  prevListingAddress: '',
 });
 const file_path = ref<string>();
 const schema = object({
@@ -30,10 +30,10 @@ const schema = object({
 });
 
 const onSubmit = async () => {
-  if (prevListingAddress.value) {
+  if (form.prevListingAddress) {
     try {
-      if (prevListingAddress.value.length !== 44) throw new Error('Invalid Lenght address');
-      new PublicKey(prevListingAddress.value);
+      if (form.prevListingAddress.length !== 44) throw new Error('Invalid Lenght address');
+      new PublicKey(form.prevListingAddress);
     } catch (error) {
       console.log('error', error);
       toast.add({
@@ -45,7 +45,7 @@ const onSubmit = async () => {
     }
   }
   console.log('creation listing...');
-  await handleCreateListing(form, selectedToken.value, prevListingAddress.value, isLoading);
+  await handleCreateListing(form, selectedToken.value, form.prevListingAddress, isLoading);
 };
 const handleFileChange = (files: FileList) => {
   if (files.length === 0) return;
@@ -128,7 +128,7 @@ const onTokenClick = () => {
           class="form-group"
         >
           <UInput
-            v-model="prevListingAddress"
+            v-model="form.prevListingAddress"
             size="md"
             variant="outline"
             placeholder="Previous listing"
