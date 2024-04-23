@@ -17,7 +17,6 @@
   "dependencies": {
     "@coral-xyz/anchor": "^0.29.0",
     "@metaplex-foundation/js": "^0.20.1",
-    "@metaplex-foundation/mpl-bubblegum": "^4.0.0",
     "@metaplex-foundation/mpl-token-metadata": "^3.2.1",
     "@metaplex-foundation/umi": "^0.9.1",
     "@metaplex-foundation/umi-bundle-defaults": "^0.9.1",
