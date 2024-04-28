@@ -35,7 +35,6 @@ const onSubmit = async () => {
       if (form.prevListingAddress.length !== 44) throw new Error('Invalid Lenght address');
       new PublicKey(form.prevListingAddress);
     } catch (error) {
-      console.log('error', error);
       toast.add({
         id: 'error',
         title: 'Error',
@@ -168,14 +167,29 @@ const onTokenClick = () => {
   background: #ffffff;
   box-shadow: 0 0.25rem 0.375rem rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 37.5rem; /* equivalent to 600px */
+  max-width: 37.5rem;
 }
 .form-group {
-  margin-bottom: 1.25rem; /* equivalent to 20px */
+  margin-bottom: 1.25rem;
   width: 100%;
 }
 .selected-token {
-  background-color: #f0f0f0; /* Light grey background for the selected token */
+  background-color: #f0f0f0;
   font-weight: bold;
+}
+
+/* Styles for dark theme */
+@media (prefers-color-scheme: dark) {
+  .form-wrapper {
+    background-color: #333; /* Darker background for the form wrapper */
+  }
+  .form-container {
+    background: #222; /* Dark background for the form container */
+    color: #fff; /* Light text for readability in dark mode */
+    box-shadow: 0 0.25rem 0.375rem rgba(255, 255, 255, 0.1); /* Lighter shadow */
+  }
+  .selected-token {
+    background-color: #555; /* Darker background for the selected token */
+  }
 }
 </style>

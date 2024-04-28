@@ -40,6 +40,7 @@ export const handleCreateListing = async (
       buyer: null,
       id: '0',
       created_at: '0',
+      nftAddress: '',
     };
     listing.ipfs_hash = await uploadingImage(form.file as File);
     const res = await $fetch('/api/create-listing', {

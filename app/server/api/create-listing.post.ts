@@ -5,17 +5,16 @@ export default defineEventHandler(async (event): Promise<string> => {
   try {
     const body = await readBody(event);
     const {listing, prevListingAddress} = body;
-    prevListingAddress;
-    if (!listing) throw new Error('No listing provided');
-    const requiredParams = ['name', 'description', 'seller', 'ipfs_hash', 'price'];
-    checkMissingParams(listing, requiredParams);
+    checkMissingParams(body, ['listing']);
+    checkMissingParams(listing, ['name', 'description', 'seller', 'ipfs_hash', 'price']);
     listing.id = uuidv4();
     listing.created_at = new Date().toISOString();
+    const nftAddress = await $fetch('/api/handle-nft-listing', {
+      method: 'POST',
+      body: {listing, prevListingAddress},
+    });
+    listing.nftAddress = nftAddress;
     await useStorage('db').setItem(listing.id.toString(), listing);
-    // await $fetch('/api/handle-nft-listing', {
-    //   method: 'POST',
-    //   body: {listing, prevListingAddress},
-    // });
     return listing.id;
   } catch (e) {
     const error = e as Error;

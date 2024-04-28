@@ -1,7 +1,4 @@
 <script lang="ts" setup>
-import {FindReferenceError, findReference, validateTransfer} from '@solana/pay';
-import {Connection, PublicKey, type ConfirmedSignatureInfo} from '@solana/web3.js';
-import BigNumber from 'bignumber.js';
 import {useWallet} from 'solana-wallets-vue';
 
 enum StatusBuy {
@@ -16,7 +13,6 @@ const wallet = useWallet(); //user wallet
 const toast = useToast(); //toast notification
 const route = useRoute(); //route params
 const config = useRuntimeConfig();
-const recipient = new PublicKey(config.public.RECIPIENT_PUBLIC_KEY); //wallet that recv the payment
 const isBuying = ref(false); // boolean to check if the user is in the process of buying
 const statusBuy = ref<StatusBuy>(StatusBuy.waitingUserInput); // status of the buy process
 const {
@@ -28,54 +24,25 @@ const {
   body: JSON.stringify({id: route.params.id_listing}),
 });
 
-const pollForSignature = async (
-  connection: Connection,
-  reference: PublicKey,
-): Promise<ConfirmedSignatureInfo | null> => {
-  for (let i = 0; i < 60; i++) {
-    try {
-      return await findReference(connection, reference, {finality: 'confirmed'});
-    } catch (e) {
-      if (e instanceof FindReferenceError) {
-        console.log('nothing found, retry in 1 sec');
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        continue;
-      }
-      throw e;
-    }
-  }
-  return null;
-};
-
 const handleBuy = async () => {
   try {
     isBuying.value = true;
     statusBuy.value = StatusBuy.GeneratingQR;
-    const {qr_code, reference_address} = await GenerateQRCode(
+    const {qr_code, referenceAddress} = await GenerateQRCode(
       listing.value as t_listing,
-      recipient,
+      config.public.RECIPIENT_PUBLIC_KEY,
     );
-    const reference = new PublicKey(reference_address);
     statusBuy.value = StatusBuy.GeneratedQR;
     await nextTick();
     qr_code.append(document.getElementById('qr-code') as HTMLElement | undefined);
-    const connection: Connection = new Connection(config.public.SOLANA_DEVNET_RPC, 'confirmed');
-    const signatureInfo = await pollForSignature(connection, reference);
-    if (!signatureInfo) throw new Error('Payment not confirmed');
-    await validateTransfer(
-      connection,
-      signatureInfo?.signature as string,
-      {
-        recipient,
-        amount: new BigNumber(listing.value?.price as number),
-        splToken: listing.value?.token
-          ? new PublicKey(listing.value?.token.address as string)
-          : undefined,
-        reference,
-        memo: 'Buying-Item',
+    await $fetch('/api/wait-payement', {
+      method: 'POST',
+      body: {
+        referenceAddress,
+        recipientAddress: config.public.RECIPIENT_PUBLIC_KEY,
+        listing: listing.value,
       },
-      {commitment: 'confirmed'},
-    );
+    });
     statusBuy.value = StatusBuy.PaymentConfirmed;
     await $fetch('/api/close-listing', {
       method: 'POST',
@@ -117,12 +84,15 @@ const handleBuy = async () => {
       <div v-else-if="error">Error fetching listing: {{ error.message }}</div>
       <div v-else>
         <FullListing :listing="listing as t_listing">
-          <UButton
-            class="buy-button"
-            label="Buy This Item"
-            :disabled="listing?.buyer !== null"
-            @click="handleBuy"
-          />
+          <div v-if="listing?.buyer != null">This item has already been sold.</div>
+          <div v-else>
+            <UButton
+              class="buy-button"
+              label="Buy This Item"
+              :disabled="listing?.buyer != null"
+              @click="handleBuy"
+            />
+          </div>
           <UModal v-model="isBuying">
             <UCard class="p-4">
               <div class="card-header">

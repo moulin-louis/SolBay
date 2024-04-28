@@ -5,7 +5,7 @@ declare global {
     //Fill by the server
     id: string; //uid of the listing
     created_at: string; //timestamp
-    nft_address: string; //address of the nft
+    nftAddress: string; //address of the nft
     //Fill by the client
     name: string; //name of the listing
     description: string; //description of the listing

@@ -1,11 +1,12 @@
 import {fetchAllListing} from '../utils/fetch-all-listings';
+import {checkMissingParams} from '../utils/checkMissingParams';
 
 export default defineEventHandler(async (event): Promise<t_listing[]> => {
   try {
     const body = await readBody(event);
     if (!body) throw new Error('Empty body');
+    checkMissingParams(body, ['buyer']);
     const buyer = body.buyer;
-    if (!buyer) throw new Error('Invalid seller');
     const listings = await fetchAllListing();
     return listings.filter((listing) => listing.buyer === buyer);
   } catch (e) {

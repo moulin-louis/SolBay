@@ -18,16 +18,14 @@ export default defineEventHandler(
     event,
   ): Promise<{
     url: URL;
-    reference: PublicKey;
+    reference: string;
   }> => {
     try {
       const body = await readBody(event);
       if (!body) throw new Error('No body');
-      const requiredParams = ['recipient', 'amount', 'message', 'memo'];
-      checkMissingParams(body, requiredParams);
+      checkMissingParams(body, ['recipient', 'amount', 'message', 'memo']);
       const {recipient, amount, splToken, message, memo}: t_paramsURL = body;
       const reference = new Keypair();
-      console.log('reference', reference.publicKey.toBase58());
       return {
         url: encodeURL({
           recipient: new PublicKey(recipient),
@@ -38,7 +36,7 @@ export default defineEventHandler(
           message,
           memo,
         }),
-        reference: reference.publicKey,
+        reference: reference.publicKey.toString(),
       };
     } catch (e) {
       const error = e as Error;
