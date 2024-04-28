@@ -8,8 +8,8 @@ const listing: t_listing = props.listing;
 <template>
   <UCard>
     <template #header>
-      <div class="card-header">
-        <NuxtImg :src="getImgLink(listing as unknown as t_listing)" />
+      <div>
+        <NuxtImg :src="getImgLink(listing as unknown as t_listing)" class="rounded-2xl" />
       </div>
     </template>
     <div class="card-content">
@@ -32,4 +32,4 @@ const listing: t_listing = props.listing;
   </UCard>
 </template>
 
-<style></style>
+<style scoped></style>

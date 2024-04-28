@@ -87,7 +87,7 @@ const handleBuy = async () => {
           <div v-if="listing?.buyer != null">This item has already been sold.</div>
           <div v-else>
             <UButton
-              class="buy-button"
+              class="buy-button rounded-full"
               label="Buy This Item"
               :disabled="listing?.buyer != null"
               @click="handleBuy"
@@ -112,65 +112,4 @@ const handleBuy = async () => {
   </div>
 </template>
 
-<style scoped>
-.card {
-  max-width: 50rem; /* 800px assuming base font size is 16px */
-  margin: auto;
-  box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
-  border-radius: 1rem;
-  overflow: hidden;
-}
-
-.card img {
-  width: 100%;
-  object-fit: cover;
-  height: auto;
-}
-
-.card-header {
-  padding: 1rem;
-  background: #f8f8f8;
-}
-
-.card-title {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-}
-
-.buy-button {
-  font-size: 1rem;
-  padding: 0.5rem 1rem;
-  background-color: #0055ff;
-  color: white;
-  border: none;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.buy-button:hover {
-  background-color: #0033aa;
-}
-
-/* Responsive adjustments */
-@media (max-width: 48em) {
-  /* 768px */
-  .card {
-    border-radius: 0;
-  }
-
-  .card-header,
-  .card-footer {
-    padding: 0.75rem;
-  }
-
-  .card-title {
-    font-size: 1.25rem;
-  }
-
-  .card-price {
-    font-size: 1rem;
-  }
-}
-</style>
+<style scoped></style>

@@ -23,7 +23,7 @@ await nextTick();
     <div v-else-if="pending">Loading...</div>
     <div v-else-if="error">Error fetching listing: {{ error.message }}</div>
     <div v-else>
-      <ListListing :listings="listings as unknown as t_listing[]" variant="tiny" />
+      <ListFullListing :listings="listings" />
     </div>
     <UButton @click="refresh">Refresh</UButton>
   </div>

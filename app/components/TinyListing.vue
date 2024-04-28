@@ -8,29 +8,21 @@ const listing: t_listing = props.listing;
 <template>
   <UCard>
     <template #header>
-      <div class="listing-name">{{ listing.name }}</div>
+      <div class="text-xl font-bold">{{ listing.name }}</div>
     </template>
-    <div class="listing-description">{{ listing.description }}</div>
-    <div class="listing-date">
-      Listing date: {{ new Date(listing.created_at).toLocaleDateString() }}
+    <div class="p-4">
+      <div class="mb-2">{{ listing.description }}</div>
+      <div class="">Listing date: {{ new Date(listing.created_at).toLocaleDateString() }}</div>
+      <div class="flex items-center">
+        Price: <span class="font-bold ml-2">{{ listing.price }}</span>
+        {{ listing.token ? listing.token.symbol : '$SOL' }}
+      </div>
+      <NuxtImg :src="getImgLink(listing)" class="rounded-2xl" />
     </div>
-    <div class="listing-price">
-      Price: ${{ listing.price }} {{ listing.token ? listing.token.symbol : '$SOL' }}
-    </div>
-    <NuxtImg :src="getImgLink(listing)" />
     <template #footer>
       <ULink :to="`/listing/${listing.id}`">
-        <UButton>View Details</UButton>
+        <UButton class="py-2 px-4 rounded">View Details</UButton>
       </ULink>
     </template>
   </UCard>
 </template>
-
-<style>
-.listing-name,
-.listing-description,
-.listing-price,
-.listing-date {
-  margin-bottom: 0.625em;
-}
-</style>
