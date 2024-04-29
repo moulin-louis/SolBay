@@ -1,25 +1,24 @@
 <script lang="ts" setup>
-import type {ListFormat} from 'typescript';
 import {useListNft} from '~/composables/ListNft';
 
 const props = defineProps<{
   isOpen: boolean;
-  ownerAddress: string | undefined;
+  ownerAddress: string;
   selectedNft: unknown | null;
-  upadteSelectedNft: (token: t_token | null) => void;
+  upadteSelectedNft: (nft: t_nft) => void;
 }>();
 const ownerAddress = props.ownerAddress;
 const isOpen = computed(() => props.isOpen);
 
 const config = useRuntimeConfig();
-const listNft = await useListNft(ownerAddress);
-listNft.value.filter((nft) => {
+const listNft: Ref<t_nft[]> = await useListNft(ownerAddress);
+listNft.value.filter((nft: t_nft) => {
   return (
     nft.authorities[0].address === config.public.RECIPIENT_PUBLIC_KEY &&
     nft.creators[0].address === config.public.CREATOR_PUBLIC_KEY
   );
 }); //filter out only SolBay NFT
-listNft.value.forEach((nft) => console.log('nft = ', nft));
+listNft.value.forEach((nft: t_nft) => console.log('nft = ', nft));
 </script>
 
 <template>

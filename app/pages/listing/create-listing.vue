@@ -3,12 +3,16 @@ import {mixed, number, object, string} from 'yup';
 import {useWallet} from 'solana-wallets-vue';
 
 const {wallet} = useWallet();
+let pubkey: string;
+if (wallet?.value?.adapter.publicKey?.toString())
+  pubkey = wallet?.value?.adapter.publicKey?.toString();
+else pubkey = 'UNDEFINED';
 
 const isLoading = ref(false);
 const isOpenToken = ref(false);
 const isOpenNft = ref(false);
 const selectedToken = ref<t_token | null>(null);
-const selectedNft = ref<unknown | null>(null);
+const selectedNft = ref<t_nft | null>(null);
 const file_path = ref<string>();
 const form = reactive({
   file: undefined,
@@ -36,7 +40,7 @@ const onSubmit = async () => {
     selectedNft.value ? selectedNft.value.id : null,
     isLoading,
   );
-  navigateTo(`/listing/${idListing}`)
+  navigateTo(`/listing/${idListing}`);
 };
 const handleFileChange = (files: FileList) => {
   if (files.length === 0) return;
@@ -136,10 +140,10 @@ const onNftClick = () => {
           />
           <div v-if="!selectedNft">
             <ListNft
-              :owner-address="wallet.adapter.publicKey?.toString()"
+              :owner-address="pubkey"
               :is-open="isOpenNft"
               :selected-nft="selectedNft"
-              :upadte-selected-nft="(nft) => (selectedNft = nft)"
+              :upadte-selected-nft="(nft: t_nft) => (selectedNft = nft)"
             />
           </div>
           <div v-else>

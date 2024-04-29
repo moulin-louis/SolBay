@@ -1,4 +1,4 @@
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event): Promise<t_nft[]> => {
   const body = await readBody(event);
   checkMissingParams(body, ['ownerAddress']);
   const config = useRuntimeConfig();
@@ -18,8 +18,8 @@ export default defineEventHandler(async (event) => {
       },
     }),
   });
-  const {result} = await res.json();
-  return result.items.filter((item: unknown) => {
+  const items: t_nft[] = (await res.json()).result.items;
+  return items.filter((item: t_nft) => {
     //filter out any compressed NFT
     return item.compression.compressed === false;
   });
