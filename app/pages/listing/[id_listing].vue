@@ -19,7 +19,7 @@ const {
   data: listing,
   pending,
   error,
-} = await useFetch(`/api/fetch-single-listing/`, {
+} = await useFetch(`/api/listing/fetch-single`, {
   method: 'POST',
   body: JSON.stringify({id: route.params.id_listing}),
 });
@@ -44,7 +44,7 @@ const handleBuy = async () => {
       },
     });
     statusBuy.value = StatusBuy.PaymentConfirmed;
-    await $fetch('/api/close-listing', {
+    await $fetch('/api/listing/close', {
       method: 'POST',
       body: JSON.stringify({
         id: listing.value?.id,

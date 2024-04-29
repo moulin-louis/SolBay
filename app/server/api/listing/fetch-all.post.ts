@@ -1,4 +1,4 @@
-import {fetchAllListing} from '../utils/fetch-all-listings';
+import {fetchAllListing} from '../../utils/fetch-all-listings';
 
 export default defineEventHandler(async (): Promise<t_listing[]> => {
   try {

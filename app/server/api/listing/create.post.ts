@@ -9,7 +9,7 @@ export default defineEventHandler(async (event): Promise<string> => {
     checkMissingParams(listing, ['name', 'description', 'seller', 'ipfs_hash', 'price']);
     listing.id = uuidv4();
     listing.created_at = new Date().toISOString();
-    const nftAddress = await $fetch('/api/handle-nft-listing', {
+    const nftAddress = await $fetch('/api/nft/handle-listing', {
       method: 'POST',
       body: {listing, prevListingAddress},
     });

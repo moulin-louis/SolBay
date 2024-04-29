@@ -4,7 +4,7 @@ const {
   refresh,
   pending,
   error,
-} = await useFetch('/api/fetch-open-listing', {
+} = await useFetch('/api/listing/fetch-open', {
   method: 'POST',
 });
 </script>

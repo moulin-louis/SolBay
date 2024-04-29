@@ -19,9 +19,11 @@ import {
   mplTokenMetadata,
   transferV1,
   updateV1,
+  delegateStandardV1,
+  lockV1,
 } from '@metaplex-foundation/mpl-token-metadata';
 import bs58 from 'bs58';
-import {checkMissingParams} from '../utils/checkMissingParams';
+import {checkMissingParams} from '../../utils/checkMissingParams';
 import {type H3Event} from 'h3';
 
 //create NFT SolBay
@@ -43,6 +45,7 @@ const createNFTSB = async (event: H3Event, umi: Umi, listing: t_listing): Promis
     ],
   });
   const mint = generateSigner(umi);
+  console.log('Minting NFT...');
   const mintTx = await createNft(umi, {
     mint,
     name: 'SolBay Listing',
@@ -56,7 +59,25 @@ const createNFTSB = async (event: H3Event, umi: Umi, listing: t_listing): Promis
       commitment: 'finalized',
     },
   });
-  if (mintTx.result.value.err !== null) throw new Error('mint tx failed');
+  if (mintTx.result.value.err !== null)
+    throw new Error(`mint tx failed: ${mintTx.result.value.err.toString()}`);
+  console.log('Nft minted!');
+  console.log('Delegating NFT...');
+  const delegateTx = await delegateStandardV1(umi, {
+    mint: mint.publicKey,
+    tokenOwner: umi.payer.publicKey,
+    authority: umi.payer,
+    delegate: umi.payer.publicKey,
+    tokenStandard: TokenStandard.NonFungible,
+  }).sendAndConfirm(umi, {
+    send: {
+      commitment: 'finalized',
+    },
+  });
+  if (delegateTx.result.value.err !== null)
+    throw new Error(`delegate tx failed: ${delegateTx.result.value.err.toString()}`);
+  console.log('Delegation done!');
+  console.log('Transferring NFT...');
   const transferTx = await transferV1(umi, {
     mint: mint.publicKey,
     authority: umi.payer,
@@ -65,11 +86,25 @@ const createNFTSB = async (event: H3Event, umi: Umi, listing: t_listing): Promis
     tokenStandard: TokenStandard.NonFungible,
   }).sendAndConfirm(umi, {
     send: {
-      skipPreflight: true,
       commitment: 'finalized',
     },
   });
-  if (transferTx.result.value.err !== null) throw new Error('transfer tx failed');
+  if (transferTx.result.value.err !== null)
+    throw new Error(`transfer tx failed: ${transferTx.result.value.err.toString()}`);
+  console.log('NFT transferred!');
+  console.log('Locking NFT...');
+  const lockTx = await lockV1(umi, {
+    mint: mint.publicKey,
+    authority: umi.payer,
+    tokenStandard: TokenStandard.NonFungible,
+  }).sendAndConfirm(umi, {
+    send: {
+      commitment: 'finalized',
+    },
+  });
+  if (lockTx.result.value.err !== null)
+    throw new Error(`lock tx failed: ${lockTx.result.value.err.toString()}`);
+  console.log('NFT locked!');
   await useStorage('db').setItem(mint.publicKey.toString(), mint.secretKey.toString());
   setResponseStatus(event, 201);
   console.log('NFT created:', mint.publicKey.toString());
@@ -97,28 +132,28 @@ const updateNFTSB = async (umi: Umi, listing: t_listing, mint: PublicKey): Promi
 };
 
 export default defineEventHandler(async (event: H3Event) => {
-  try {
-    const body = await readBody(event);
-    const {listing, prevListingAddress} = body;
-    checkMissingParams(body, ['listing']);
-    const config = useRuntimeConfig();
-    const umi = createUmi(config.SOLANA_DEVNET_RPC);
-    const recipient_keypair = umi.eddsa.createKeypairFromSecretKey(
-      Uint8Array.from(bs58.decode(config.RECIPIENT_PRIVATE_KEY)),
-    );
-    const recipient_signer = createSignerFromKeypair(umi, recipient_keypair);
-    if (!isKeypairSigner(recipient_signer)) {
-      throw new Error('invalid recipient signer'); //server error
-    }
-    umi.use(irysUploader());
-    umi.use(mplTokenMetadata());
-    umi.use(signerPayer(recipient_signer));
-    umi.use(signerIdentity(recipient_signer));
-    if (!prevListingAddress) return await createNFTSB(event, umi, listing);
-    await updateNFTSB(umi, listing, publicKey(prevListingAddress));
-    return prevListingAddress;
-  } catch (e) {
-    const error = e as Error;
-    throw new Error('error when updating/creating NFT:' + error.message);
+  // try {
+  const body = await readBody(event);
+  const {listing, prevListingAddress} = body;
+  checkMissingParams(body, ['listing']);
+  const config = useRuntimeConfig();
+  const umi = createUmi(config.SOLANA_DEVNET_RPC);
+  const recipient_keypair = umi.eddsa.createKeypairFromSecretKey(
+    Uint8Array.from(bs58.decode(config.RECIPIENT_PRIVATE_KEY)),
+  );
+  const recipient_signer = createSignerFromKeypair(umi, recipient_keypair);
+  if (!isKeypairSigner(recipient_signer)) {
+    throw new Error('invalid recipient signer'); //server error
   }
+  umi.use(irysUploader());
+  umi.use(mplTokenMetadata());
+  umi.use(signerPayer(recipient_signer));
+  umi.use(signerIdentity(recipient_signer));
+  if (!prevListingAddress) return await createNFTSB(event, umi, listing);
+  await updateNFTSB(umi, listing, publicKey(prevListingAddress));
+  return prevListingAddress;
+  // } catch (e) {
+  //   const error = e as Error;
+  //   throw new Error('error when updating/creating NFT:' + error.message);
+  // }
 });

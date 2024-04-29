@@ -1,5 +1,5 @@
-import {fetchAllListing} from '../utils/fetch-all-listings';
-import {checkMissingParams} from '../utils/checkMissingParams';
+import {fetchAllListing} from '../../utils/fetch-all-listings';
+import {checkMissingParams} from '../../utils/checkMissingParams';
 
 export default defineEventHandler(async (event): Promise<t_listing[]> => {
   try {
