@@ -1,5 +1,3 @@
-import {checkMissingParams} from '../../utils/checkMissingParams';
-
 export default defineEventHandler(async (event): Promise<void> => {
   try {
     const body = await readBody(event);

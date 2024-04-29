@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {useTokens} from '~/composables/useTokens';
+import {useListToken} from '~/composables/ListToken';
 
 const props = defineProps<{
   isOpen: boolean;
@@ -7,7 +7,7 @@ const props = defineProps<{
   upadteSelectedToken: (token: t_token | null) => void;
 }>();
 
-const tokens = await useTokens();
+const tokens = await useListToken();
 tokens.value.unshift({
   name: 'Solana (Recommended)',
   symbol: 'SOL',

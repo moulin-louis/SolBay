@@ -1,5 +1,4 @@
 import BigNumber from 'bignumber.js';
-import {checkMissingParams} from '../utils/checkMissingParams';
 import {encodeURL} from '@solana/pay';
 import {PublicKey, Keypair} from '@solana/web3.js';
 

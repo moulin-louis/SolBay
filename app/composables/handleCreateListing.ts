@@ -22,7 +22,7 @@ export const handleCreateListing = async (
   selectedToken: t_token | null,
   prevListingAddress: string | null,
   isLoading: Ref<boolean>,
-) => {
+): Promise<string> => {
   const toast = useToast();
   const {wallet} = useWallet();
   isLoading.value = true;
@@ -55,6 +55,7 @@ export const handleCreateListing = async (
       color: 'green',
     });
     console.log('Listing created');
+    return res;
   } catch (e) {
     const error = e as Error;
     toast.add({

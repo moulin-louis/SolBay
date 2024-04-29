@@ -1,7 +1,6 @@
 import {FindReferenceError, findReference, validateTransfer} from '@solana/pay';
 import {type ConfirmedSignatureInfo, Connection, PublicKey} from '@solana/web3.js';
 import BigNumber from 'bignumber.js';
-import {checkMissingParams} from '../utils/checkMissingParams';
 
 const pollForSignature = async (
   connection: Connection,

@@ -1,6 +1,4 @@
 import {v4 as uuidv4} from 'uuid';
-import {checkMissingParams} from '../../utils/checkMissingParams';
-
 export default defineEventHandler(async (event): Promise<string> => {
   try {
     const body = await readBody(event);

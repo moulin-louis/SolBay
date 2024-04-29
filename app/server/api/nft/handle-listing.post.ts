@@ -23,7 +23,6 @@ import {
   delegateStandardV1,
 } from '@metaplex-foundation/mpl-token-metadata';
 import bs58 from 'bs58';
-import {checkMissingParams} from '../../utils/checkMissingParams';
 import {getImgLink} from '~/composables/getImgLink';
 
 //create NFT SolBay

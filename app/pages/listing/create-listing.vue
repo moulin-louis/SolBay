@@ -1,21 +1,21 @@
 <script setup lang="ts">
 import {mixed, number, object, string} from 'yup';
 import {useWallet} from 'solana-wallets-vue';
-import {PublicKey} from '@solana/web3.js';
+
+const {wallet} = useWallet();
 
 const isLoading = ref(false);
-const isOpen = ref(false);
-const {wallet} = useWallet();
-const toast = useToast();
+const isOpenToken = ref(false);
+const isOpenNft = ref(false);
 const selectedToken = ref<t_token | null>(null);
+const selectedNft = ref<unknown | null>(null);
+const file_path = ref<string>();
 const form = reactive({
   file: undefined,
   name: '',
   description: '',
   price: 0,
-  prevListingAddress: '',
 });
-const file_path = ref<string>();
 const schema = object({
   file: mixed()
     .test(
@@ -30,29 +30,25 @@ const schema = object({
 });
 
 const onSubmit = async () => {
-  if (form.prevListingAddress) {
-    try {
-      if (form.prevListingAddress.length !== 44) throw new Error('Invalid Lenght address');
-      new PublicKey(form.prevListingAddress);
-    } catch (error) {
-      toast.add({
-        id: 'error',
-        title: 'Error',
-        description: 'Please provide a valid previous listing address',
-      });
-      return;
-    }
-  }
-  console.log('creation listing...');
-  await handleCreateListing(form, selectedToken.value, form.prevListingAddress, isLoading);
+  const idListing = await handleCreateListing(
+    form,
+    selectedToken.value,
+    selectedNft.value ? selectedNft.value.id : null,
+    isLoading,
+  );
+  navigateTo(`/listing/${idListing}`)
 };
 const handleFileChange = (files: FileList) => {
   if (files.length === 0) return;
   form.file = files[0] as unknown as undefined;
 };
 const onTokenClick = () => {
-  isOpen.value = true;
+  isOpenToken.value = true;
   selectedToken.value = null;
+};
+const onNftClick = () => {
+  isOpenNft.value = true;
+  selectedNft.value = null;
 };
 </script>
 
@@ -104,7 +100,7 @@ const onTokenClick = () => {
           />
           <div v-if="!selectedToken">
             <ListToken
-              :is-open="isOpen"
+              :is-open="isOpenToken"
               :selected-token="selectedToken"
               :upadte-selected-token="(token: t_token | null) => (selectedToken = token)"
             />
@@ -128,16 +124,27 @@ const onTokenClick = () => {
           />
         </UFormGroup>
         <UFormGroup
-          label="Previous Listing"
-          name="prev_listing"
-          description="Did you buy this item from another listing?"
-          class="mb-6"
+          label="PrevNft"
+          name="PrevNft"
+          description="If you have a NFT from the previous sale (Not required if it's the first sale)"
+          class="mb-6 border border-gray-700 rounded-md px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:ring-1"
         >
-          <UInput
-            v-model="form.prevListingAddress"
-            placeholder="Previous listing"
-            class="w-full rounded-md border border-gray-700 px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:ring-1"
+          <UButton
+            label="Choose a Nft"
+            class="text-indigo-500 hover:text-indigo-700"
+            @click="onNftClick"
           />
+          <div v-if="!selectedNft">
+            <ListNft
+              :owner-address="wallet.adapter.publicKey?.toString()"
+              :is-open="isOpenNft"
+              :selected-nft="selectedNft"
+              :upadte-selected-nft="(nft) => (selectedNft = nft)"
+            />
+          </div>
+          <div v-else>
+            <span class="text-indigo-500 font-medium">Nft choosed: {{ selectedNft.id }} </span>
+          </div>
         </UFormGroup>
         <UButton
           type="submit"
