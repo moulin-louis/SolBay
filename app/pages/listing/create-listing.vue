@@ -3,11 +3,7 @@ import {mixed, number, object, string} from 'yup';
 import {useWallet} from 'solana-wallets-vue';
 
 const {wallet} = useWallet();
-let pubkey: string;
-if (wallet?.value?.adapter.publicKey?.toString())
-  pubkey = wallet?.value?.adapter.publicKey?.toString();
-else pubkey = 'UNDEFINED';
-
+const pubkey = wallet?.value?.adapter.publicKey?.toString();
 const isLoading = ref(false);
 const isOpenToken = ref(false);
 const isOpenNft = ref(false);
@@ -138,7 +134,7 @@ const onNftClick = () => {
             class="text-indigo-500 hover:text-indigo-700"
             @click="onNftClick"
           />
-          <div v-if="!selectedNft">
+          <div v-if="!selectedNft && pubkey">
             <ListNft
               :owner-address="pubkey"
               :is-open="isOpenNft"
