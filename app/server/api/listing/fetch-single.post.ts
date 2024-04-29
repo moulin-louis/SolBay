@@ -1,4 +1,4 @@
-import {checkMissingParams} from '../utils/checkMissingParams';
+import {checkMissingParams} from '../../utils/checkMissingParams';
 
 export default defineEventHandler(async (event): Promise<t_listing> => {
   try {

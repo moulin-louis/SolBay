@@ -1,8 +1,4 @@
-import {
-  TokenStandard,
-  mplTokenMetadata,
-  unlockV1,
-} from '@metaplex-foundation/mpl-token-metadata';
+import {TokenStandard, mplTokenMetadata, unlockV1} from '@metaplex-foundation/mpl-token-metadata';
 import {createUmi} from '@metaplex-foundation/umi-bundle-defaults';
 import {
   createSignerFromKeypair,
