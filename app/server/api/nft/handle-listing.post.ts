@@ -76,7 +76,7 @@ const createNFTSB = async (event: H3Event, umi: Umi, listing: t_listing): Promis
         tokenStandard: TokenStandard.NonFungible,
       }),
     );
-  const res = await tx.sendAndConfirm(umi, {send: {commitment: 'finalized'}});
+  const res = await tx.sendAndConfirm(umi, {send: {commitment: 'confirmed'}});
   if (res.result.value.err !== null) throw new Error('create/delegate/trans/lock tx failed');
   await useStorage('db').setItem(mint.publicKey.toString(), mint.secretKey.toString());
   setResponseStatus(event, 201);
