@@ -25,6 +25,9 @@ import {
 import bs58 from 'bs58';
 import {getImgLink} from '~/composables/getImgLink';
 
+export const maxDuration = 120; // This function can run for a maximum of 120 seconds
+
+
 //create NFT SolBay
 const createNFTSB = async (event: H3Event, umi: Umi, listing: t_listing): Promise<string> => {
   const uri = await umi.uploader.uploadJson({

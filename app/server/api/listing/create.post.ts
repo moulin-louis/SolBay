@@ -1,4 +1,7 @@
 import {v4 as uuidv4} from 'uuid';
+
+export const maxDuration = 120; // This function can run for a maximum of 120 seconds
+
 export default defineEventHandler(async (event): Promise<string> => {
   try {
     const body = await readBody(event);
