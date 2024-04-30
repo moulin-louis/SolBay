@@ -1,4 +1,18 @@
-export {t_nft, t_authority, t_compressionInfo, t_file, t_link, t_attributes, t_metadata, t_content, t_creator, t_ownership, t_royalty, t_supply, t_tokenInfo};
+export {
+  t_nft,
+  t_authority,
+  t_compressionInfo,
+  t_file,
+  t_link,
+  t_attributes,
+  t_metadata,
+  t_content,
+  t_creator,
+  t_ownership,
+  t_royalty,
+  t_supply,
+  t_tokenInfo,
+};
 
 declare global {
   interface t_authority {

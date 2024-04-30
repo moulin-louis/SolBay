@@ -83,7 +83,7 @@ const handleBuy = async () => {
       <div v-if="pending">Loading...</div>
       <div v-else-if="error">Error fetching listing: {{ error.message }}</div>
       <div v-else>
-        <FullListing :listing="listing as t_listing">
+        <ListingFull :listing="listing as t_listing">
           <div v-if="listing?.buyer != null">This item has already been sold.</div>
           <div v-else>
             <UButton
@@ -106,7 +106,7 @@ const handleBuy = async () => {
               </div>
             </UCard>
           </UModal>
-        </FullListing>
+        </ListingFull>
       </div>
     </div>
   </div>

@@ -17,8 +17,7 @@ listNft.value.filter((nft: t_nft) => {
     nft.authorities[0].address === config.public.RECIPIENT_PUBLIC_KEY &&
     nft.creators[0].address === config.public.CREATOR_PUBLIC_KEY
   );
-}); //filter out only SolBay NFT
-listNft.value.forEach((nft: t_nft) => console.log('nft = ', nft));
+});
 </script>
 
 <template>

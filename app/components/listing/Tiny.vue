@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 const props = defineProps<{
-  listing: t_listing;
+  listing: t_listingFilter;
 }>();
-const listing: t_listing = props.listing;
+const listing: t_listingFilter = props.listing;
+1;
 </script>
 
 <template>

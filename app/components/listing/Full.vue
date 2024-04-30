@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 const props = defineProps<{
-  listing: t_listing;
+  listing: t_listingFilter;
 }>();
-const listing: t_listing = props.listing;
+const listing: t_listingFilter = props.listing;
 </script>
 
 <template>
@@ -11,7 +11,7 @@ const listing: t_listing = props.listing;
       <template #header>
         <div class="flex items-center p-4">
           <NuxtImg
-            :src="getImgLink(listing as unknown as t_listing)"
+            :src="getImgLink(listing)"
             alt="Listing Image"
             class="rounded object-cover mr-4"
           />

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const props = defineProps<{
-  listings: t_listing[];
+  listings: t_listingFilter[];
 }>();
 
 const {listings} = props;
@@ -9,7 +9,9 @@ const {listings} = props;
 <template>
   <div class="listing-list">
     <div v-for="listing in listings" :key="listing.id" class="listing-item">
-      <FullListing :listing="listing" />
+      <div v-if="listing.filtered === false">
+        <ListingFullisting :listing="listing" />
+      </div>
     </div>
   </div>
 </template>

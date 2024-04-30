@@ -1,12 +1,17 @@
 <script setup lang="ts">
-const {
-  data: listings,
-  refresh,
-  pending,
-  error,
-} = await useFetch('/api/listing/fetch-open', {
+const {data, refresh, pending, error} = await useFetch('/api/listing/fetch-open', {
   method: 'POST',
 });
+useState<t_listingFilter[]>('listings', () => {
+  return data.value.map((listing) => {
+    const result: t_listingFilter = {
+      ...listing,
+      filtered: false,
+    };
+    return result;
+  });
+});
+const isOpenFilter = useState<boolean>('isOpenFilter', () => false);
 </script>
 
 <template>
@@ -16,7 +21,9 @@ const {
       <div v-else-if="error" class="text-red-500">Error fetching listing: {{ error.message }}</div>
       <div v-else>
         <UButton @click="refresh">Refresh</UButton>
-        <ListTinyListing :listings="listings" />
+        <UButton @click="() => (isOpenFilter = true)">Filter</UButton>
+        <FilterListing />
+        <ListTinyListing />
       </div>
     </div>
   </div>
