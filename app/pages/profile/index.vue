@@ -2,30 +2,35 @@
 import {useWallet} from 'solana-wallets-vue';
 
 const wallet = useWallet();
+let userBuyListings: t_listingFilter[];
+let userListings: t_listingFilter[];
+
 const {
-  data: dataB,
-  refresh: refreshB,
   pending: pendingB,
+  refresh: refreshB,
   error: errorB,
-} = await useFetch('/api/listing/fetch-user-purchasing', {
+} = await useFetch('/api/user/fetch-purchasing', {
   method: 'POST',
   body: {
     buyer: wallet.publicKey.value?.toString(),
   },
+  onResponse: (response) => {
+    userBuyListings = transformListings(response.response._data as t_listing[]);
+  },
 });
-const userBuyListings = transformListings(dataB.value as t_listing[]);
 const {
-  data: dataL,
-  refresh: refreshL,
   pending: pendingL,
+  refresh: refreshL,
   error: errorL,
-} = await useFetch('/api/listing/fetch-user-listing', {
+} = await useFetch('/api/user/fetch-listings', {
   method: 'POST',
   body: {
     seller: wallet.publicKey.value?.toString(),
   },
+  onResponse: (response) => {
+    userListings = transformListings(response.response._data as t_listing[]);
+  },
 });
-const userListings = transformListings(dataL.value as t_listing[]);
 await nextTick();
 </script>
 
@@ -36,7 +41,7 @@ await nextTick();
     </div>
     <div v-if="wallet === null">Please connect your wallet</div>
     <div>
-      Listing you has purchasing:
+     Your item:
       <div v-if="pendingB">Loading...</div>
       <div v-else-if="errorB">Error fetching listing: {{ errorB.message }}</div>
       <div v-else>

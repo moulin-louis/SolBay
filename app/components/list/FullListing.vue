@@ -10,7 +10,7 @@ const {listings} = props;
   <div class="listing-list">
     <div v-for="listing in listings" :key="listing.id" class="listing-item">
       <div v-if="listing.filtered === false">
-        <ListingFullisting :listing="listing" />
+        <ListingFull :listing="listing" />
       </div>
     </div>
   </div>
