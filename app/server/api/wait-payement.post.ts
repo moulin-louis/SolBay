@@ -20,7 +20,7 @@ const pollForSignature = async (
   return null;
 };
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event): Promise<void> => {
   try {
     const body = await readBody(event);
     if (!body) throw new Error('No body provided');
@@ -29,7 +29,7 @@ export default defineEventHandler(async (event) => {
     const reference = new PublicKey(referenceAddress);
     const recipient = new PublicKey(recipientAddress);
     const config = useRuntimeConfig();
-    const connection: Connection = new Connection(config.public.SOLANA_DEVNET_RPC, 'confirmed');
+    const connection: Connection = new Connection(config.SOLANA_DEVNET_RPC, 'confirmed');
     const signatureInfo = await pollForSignature(connection, reference);
     if (!signatureInfo) throw new Error('Payment not confirmed');
     await validateTransfer(

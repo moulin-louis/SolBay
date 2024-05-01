@@ -13,7 +13,7 @@ import {
 } from '@metaplex-foundation/umi';
 import bs58 from 'bs58';
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event): Promise<string> => {
   const body = await readBody(event);
   const {adddressNft, ownerNftAddress} = body;
   console.log('adddressNft = ', adddressNft);

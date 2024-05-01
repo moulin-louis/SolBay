@@ -6,12 +6,11 @@ const {wallet} = useWallet();
 const pubkey = wallet?.value?.adapter.publicKey?.toString();
 const isLoading = ref(false);
 const isOpenToken = ref(false);
-const isOpenNft = ref(false);
 const selectedToken = ref<t_token | null>(null);
 const selectedNft = ref<t_nft | null>(null);
 const file_path = ref<string>();
-const form = reactive({
-  file: undefined,
+const form = reactive<t_form>({
+  file: new File([], ''),
   name: '',
   description: '',
   price: 0,
@@ -30,25 +29,23 @@ const schema = object({
 });
 
 const onSubmit = async () => {
+  isLoading.value = true;
   const idListing = await handleCreateListing(
     form,
     selectedToken.value,
     selectedNft.value ? selectedNft.value.id : null,
-    isLoading,
   );
+  isLoading.value = false;
+  if (!idListing) return;
   navigateTo(`/listing/${idListing}`);
 };
 const handleFileChange = (files: FileList) => {
   if (files.length === 0) return;
-  form.file = files[0] as unknown as undefined;
+  form.file = files[0];
 };
 const onTokenClick = () => {
   isOpenToken.value = true;
   selectedToken.value = null;
-};
-const onNftClick = () => {
-  isOpenNft.value = true;
-  selectedNft.value = null;
 };
 </script>
 
@@ -129,15 +126,9 @@ const onNftClick = () => {
           description="If you have a NFT from the previous sale (Not required if it's the first sale)"
           class="mb-6 border border-gray-700 rounded-md px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:ring-1"
         >
-          <UButton
-            label="Choose a Nft"
-            class="text-indigo-500 hover:text-indigo-700"
-            @click="onNftClick"
-          />
           <div v-if="!selectedNft && pubkey">
             <ListNft
               :owner-address="pubkey"
-              :is-open="isOpenNft"
               :selected-nft="selectedNft"
               :upadte-selected-nft="(nft: t_nft) => (selectedNft = nft)"
             />

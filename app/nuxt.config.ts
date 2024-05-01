@@ -18,6 +18,9 @@ export default defineNuxtConfig({
       legacyExternals: true,
     },
   },
+  app: {
+    pageTransition: {name: 'page', mode: 'out-in'},
+  },
   experimental: {
     clientNodeCompat: true,
   },

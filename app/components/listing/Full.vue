@@ -10,11 +10,7 @@ const listing: t_listingFilter = props.listing;
     <UCard class="bg-gray-100 shadow-md rounded-lg">
       <template #header>
         <div class="flex items-center p-4">
-          <NuxtImg
-            :src="getImgLink(listing)"
-            alt="Listing Image"
-            class="rounded object-cover mr-4"
-          />
+          <NuxtImg :src="listing.imageUri" alt="Listing Image" class="rounded object-cover mr-4" />
         </div>
       </template>
       <div class="p-4">

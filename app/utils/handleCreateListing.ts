@@ -1,51 +1,36 @@
 import {useWallet} from 'solana-wallets-vue';
 
-interface t_form {
-  file: File | undefined;
-  name: string;
-  description: string;
-  price: number;
-}
-
-const uploadingImage = async (file: File): Promise<string> => {
-  const ImageData = new FormData();
-  ImageData.append('file', file);
-  const ipfs_answer = await $fetch('/api/upload-file-ipfs', {
-    method: 'POST',
-    body: ImageData,
-  });
-  return ipfs_answer;
-};
-
 export const handleCreateListing = async (
   form: t_form,
   selectedToken: t_token | null,
   prevListingAddress: string | null,
-  isLoading: Ref<boolean>,
 ): Promise<string> => {
+  let idRes = '';
   const toast = useToast();
   const {wallet} = useWallet();
-  isLoading.value = true;
   try {
     const pub_key = wallet.value?.adapter.publicKey;
     if (!pub_key) throw new Error('Wallet not connected');
+
     const listing: t_listing = {
       name: form.name,
       description: form.description,
       seller: pub_key.toString(),
-      ipfs_hash: '',
-      //if user choose solana token, we set the token info to null
       token: selectedToken?.address === 'SOL' ? null : selectedToken,
       price: form.price,
       buyer: null,
       id: '0',
       created_at: '0',
       nftAddress: '',
+      imageUri: '',
     };
-    listing.ipfs_hash = await uploadingImage(form.file as File);
+    const listingData = new FormData();
+    listingData.append('file', form.file, 'listing-image');
+    listingData.append('listing', JSON.stringify(listing));
+    listingData.append('prevListingAddress', prevListingAddress || '');
     const res = await $fetch('/api/listing/create', {
       method: 'POST',
-      body: {listing, prevListingAddress},
+      body: listingData,
     });
     toast.add({
       id: 'success-notification',
@@ -55,7 +40,7 @@ export const handleCreateListing = async (
       color: 'green',
     });
     console.log('Listing created');
-    return res;
+    idRes = res;
   } catch (e) {
     const error = e as Error;
     toast.add({
@@ -65,7 +50,7 @@ export const handleCreateListing = async (
       icon: '',
       color: 'red',
     });
-  } finally {
-    isLoading.value = false;
+    console.log('Error creating listing: ', error.message);
   }
+  return idRes;
 };
