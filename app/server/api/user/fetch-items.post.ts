@@ -8,6 +8,6 @@ export default defineEventHandler(async (event): Promise<t_listing[]> => {
     return listings.filter((listing) => listing.buyer === buyer);
   } catch (e) {
     const error = e as Error;
-    throw new Error('error when fetching open purchasing:' + error.message);
+    throw new Error('error when fetching items:' + error.message);
   }
 });

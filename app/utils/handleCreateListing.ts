@@ -7,11 +7,10 @@ export const handleCreateListing = async (
 ): Promise<string> => {
   let idRes = '';
   const toast = useToast();
-  const {wallet} = useWallet();
   try {
+    const {wallet} = useWallet();
     const pub_key = wallet.value?.adapter.publicKey;
     if (!pub_key) throw new Error('Wallet not connected');
-
     const listing: t_listing = {
       name: form.name,
       description: form.description,

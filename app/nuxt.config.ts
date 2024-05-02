@@ -1,7 +1,14 @@
 // import * as process from 'node:process';
 export default defineNuxtConfig({
   ssr: false,
-  modules: ['@nuxt/image', '@nuxt/eslint', '@nuxt/ui', '@nuxt/fonts', '@vueuse/nuxt'],
+  modules: [
+    '@nuxt/image',
+    '@nuxt/eslint',
+    '@nuxt/ui',
+    '@nuxt/fonts',
+    '@vueuse/nuxt',
+    '@sidebase/nuxt-auth',
+  ],
   nitro: {
     storage: {
       db: {
@@ -18,11 +25,33 @@ export default defineNuxtConfig({
       legacyExternals: true,
     },
   },
+
+  experimental: {
+    clientNodeCompat: true,
+  },
+  vite: {
+    build: {
+      rollupOptions: {
+        external: ['sharp'],
+      },
+    },
+  },
   app: {
     pageTransition: {name: 'page', mode: 'out-in'},
   },
-  experimental: {
-    clientNodeCompat: true,
+  auth: {
+    provider: {
+      type: 'local',
+      endpoints: {
+        getSession: {path: '/user'},
+      },
+      token: {
+        signInResponseTokenPointer: '/token/accessToken',
+      },
+    },
+    globalAppMiddleware: {
+      isEnabled: true,
+    },
   },
   runtimeConfig: {
     PINATA_JWT: process.env.NUXT_PINATA_JWT,

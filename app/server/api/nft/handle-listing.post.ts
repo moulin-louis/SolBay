@@ -24,6 +24,7 @@ import {
   delegateStandardV1,
 } from '@metaplex-foundation/mpl-token-metadata';
 import bs58 from 'bs58';
+// import sharp from 'sharp';
 
 export const maxDuration = 120; // This function can run for a maximum of 120 seconds
 
@@ -84,7 +85,7 @@ const createNFTSB = async (
   if (res.result.value.err !== null) throw new Error('create/delegate/trans/lock tx failed');
   await useStorage('db').setItem(mint.publicKey.toString(), mint.secretKey.toString());
   setResponseStatus(event, 201);
-  console.log('NFT created:', mint.publicKey.toString());
+  console.log('NFT created: https://solana.fm/address/', mint.publicKey.toString());
   return mint.publicKey.toString();
 };
 
@@ -111,60 +112,62 @@ export default defineEventHandler(
     nftAddress: string;
     imageUri: string | null;
   }> => {
-    // try {
-    const config = useRuntimeConfig();
-    const mFormData = await readMultipartFormData(event);
-    if (!mFormData) throw new Error('No form data found');
+    try {
+      const config = useRuntimeConfig();
+      const mFormData = await readMultipartFormData(event);
+      if (!mFormData) throw new Error('No form data found');
 
-    const listing = JSON.parse(
-      mFormData.find((data) => data.name === 'listing')?.data as unknown as string,
-    );
-    checkMissingParams(listing, ['name', 'description', 'seller', 'price']);
+      const listing = JSON.parse(
+        mFormData.find((data) => data.name === 'listing')?.data as unknown as string,
+      );
+      checkMissingParams(listing, ['name', 'description', 'seller', 'price']);
 
-    const file = mFormData.find((data) => data.name === 'file');
-    if (!file) throw new Error('File not found');
+      const file = mFormData.find((data) => data.name === 'file');
+      if (!file) throw new Error('File not found');
 
-    const prevListingAddress = mFormData
-      .find((data) => data.name === 'prevListingAddress')
-      ?.data.toString();
+      const prevListingAddress = mFormData
+        .find((data) => data.name === 'prevListingAddress')
+        ?.data.toString();
 
-    const umi = createUmi(config.SOLANA_DEVNET_RPC);
-    const recipient_keypair = umi.eddsa.createKeypairFromSecretKey(
-      Uint8Array.from(bs58.decode(config.RECIPIENT_PRIVATE_KEY)),
-    );
-    if (!listing) throw new Error('Listing not found');
-    const recipient_signer = createSignerFromKeypair(umi, recipient_keypair);
-    if (!isKeypairSigner(recipient_signer)) {
-      throw new Error('invalid recipient signer'); //server error
+      const umi = createUmi(config.SOLANA_DEVNET_RPC);
+      const recipient_keypair = umi.eddsa.createKeypairFromSecretKey(
+        Uint8Array.from(bs58.decode(config.RECIPIENT_PRIVATE_KEY)),
+      );
+      if (!listing) throw new Error('Listing not found');
+      const recipient_signer = createSignerFromKeypair(umi, recipient_keypair);
+      if (!isKeypairSigner(recipient_signer)) {
+        throw new Error('invalid recipient signer'); //server error
+      }
+      umi.use(irysUploader());
+      umi.use(mplTokenMetadata());
+      umi.use(signerPayer(recipient_signer));
+      umi.use(signerIdentity(recipient_signer));
+
+      if (!prevListingAddress) {
+        const irys = new Irys({
+          url: 'devnet',
+          token: 'solana',
+          key: config.RECIPIENT_PRIVATE_KEY,
+          config: {
+            providerUrl: config.SOLANA_DEVNET_RPC,
+          },
+        });
+        const imageSharp = await sharp(file.data).webp({quality: 20}).toBuffer();
+        await irys.fund(await irys.getPrice(imageSharp.length));
+        console.log(`${file.data.length} bytes => ${imageSharp.length} bytes`);
+        const response = await irys.uploader.uploadData(imageSharp);
+        const imageUri = `https://gateway.irys.xyz/${response.id}`;
+        console.log(`File uploaded ==>${imageUri}`);
+        return {
+          nftAddress: await createNFTSB(event, umi, listing, imageUri),
+          imageUri,
+        };
+      }
+      await updateNFTSB(umi, listing, publicKey(prevListingAddress));
+      return {nftAddress: prevListingAddress, imageUri: null};
+    } catch (e) {
+      const error = e as Error;
+      throw new Error('error when updating/creating NFT:' + error.message);
     }
-    umi.use(irysUploader());
-    umi.use(mplTokenMetadata());
-    umi.use(signerPayer(recipient_signer));
-    umi.use(signerIdentity(recipient_signer));
-
-    if (!prevListingAddress) {
-      const irys = new Irys({
-        url: 'devnet',
-        token: 'solana',
-        key: config.RECIPIENT_PRIVATE_KEY,
-        config: {
-          providerUrl: config.SOLANA_DEVNET_RPC,
-        },
-      });
-      await irys.fund(await irys.getPrice(file.data.length));
-      const response = await irys.uploader.uploadData(file.data);
-      const imageUri = `https://gateway.irys.xyz/${response.id}`;
-      console.log(`File uploaded ==>${imageUri}`);
-      return {
-        nftAddress: await createNFTSB(event, umi, listing, imageUri),
-        imageUri,
-      };
-    }
-    await updateNFTSB(umi, listing, publicKey(prevListingAddress));
-    return {nftAddress: prevListingAddress, imageUri: null};
-    // } catch (e) {
-    //   const error = e as Error;
-    //   throw new Error('error when updating/creating NFT:' + error.message);
-    // }
   },
 );
