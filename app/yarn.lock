@@ -301,14 +301,7 @@
     "@babel/helper-plugin-utils" "^7.24.0"
     "@babel/plugin-syntax-typescript" "^7.24.1"
 
-"@babel/runtime@^7.17.2", "@babel/runtime@^7.23.4", "@babel/runtime@^7.24.1":
-  version "7.24.4"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.24.4.tgz#de795accd698007a66ba44add6cc86542aff1edd"
-  integrity sha512-dkxf7+hn8mFBwKjs9bvBlArzLVxVbS8usaPUDd5p2a9JCL9tB8OaOVN1isD4+Xyk4ns89/xeOmbQvgdK7IIVdA==
-  dependencies:
-    regenerator-runtime "^0.14.0"
-
-"@babel/runtime@^7.20.13", "@babel/runtime@^7.21.0":
+"@babel/runtime@^7.17.2", "@babel/runtime@^7.20.13", "@babel/runtime@^7.21.0", "@babel/runtime@^7.23.4", "@babel/runtime@^7.24.1":
   version "7.24.5"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.24.5.tgz#230946857c053a36ccc66e1dd03b17dd0c4ed02c"
   integrity sha512-Nms86NXrsaeU9vbBJKni6gXiEXZ4CVpYVzEjDH9Sb8vmZ3UljyA1GSOJl/6LGPO8EHLuSF9H+IxNXHPX8QHJ4g==
@@ -9280,10 +9273,10 @@ neo-async@^2.6.2:
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.2.tgz#b4aafb93e3aeb2d8174ca53cf163ab7d7308305f"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
 
-next-auth@4.21.1:
-  version "4.21.1"
-  resolved "https://registry.yarnpkg.com/next-auth/-/next-auth-4.21.1.tgz#8db520395b2c697bd1259b76831d319728f0d50d"
-  integrity sha512-NYkU4jAPSVxWhCblE8dDFAnKM7kOoO/QEobQ0RoEVP9Wox99A3PKHwOAsWhSg8ahJG/iKIWk2Bo1xHvsS4R39Q==
+next-auth@4.24.5:
+  version "4.24.5"
+  resolved "https://registry.yarnpkg.com/next-auth/-/next-auth-4.24.5.tgz#1fd1bfc0603c61fd2ba6fd81b976af690edbf07e"
+  integrity sha512-3RafV3XbfIKk6rF6GlLE4/KxjTcuMCifqrmD+98ejFq73SRoj2rmzoca8u764977lH/Q7jo6Xu6yM+Re1Mz/Og==
   dependencies:
     "@babel/runtime" "^7.20.13"
     "@panva/hkdf" "^1.0.2"
