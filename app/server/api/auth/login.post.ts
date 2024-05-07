@@ -2,7 +2,7 @@ import {createError, eventHandler, readBody} from 'h3';
 import {z} from 'zod';
 import jwt from 'jsonwebtoken';
 
-const refreshTokens: Record<number, Record<string, any>> = {};
+const refreshTokens: Record<number, Record<string, unknown>> = {};
 export const SECRET = 'dummy';
 
 export default eventHandler(async (event) => {

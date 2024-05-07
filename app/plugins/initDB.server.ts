@@ -1,4 +1,3 @@
-
 export default defineNuxtPlugin(() => {
   const storage = useStorage('db');
   storage.setItem('users', []);
