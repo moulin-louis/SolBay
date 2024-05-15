@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 use std::fmt::Debug;
 
-declare_id!("8fwi3RtHHKogVd2wwqttrrMSazL9vnkttUikD4CW9y2J");
+declare_id!("GSEKi5UuUPiQMRWvvpvFHX8fjowv5NkRUcZc9ZMk3w33");
 
 #[error_code]
 pub enum NameError {
@@ -17,7 +17,7 @@ pub enum BideError {
     PriceTooLow,
     #[msg("The bidder is already the top one")]
     SameBidder,
-    #[msg("The auction ended, you can bid now")]
+    #[msg("The auction ended, you cant bid now")]
     AuctionEnded,
 }
 
@@ -28,7 +28,7 @@ pub mod auction {
     pub fn initialize(ctx: Context<Initialize>, auction_info: AuctionInfo) -> Result<()> {
         msg!("In init fn");
         require!(auction_info.name.len() <= 50, NameError::StringTooLong);
-        require!(!auction_info.name.is_empty(), NameError::EmptyString);
+        require!(auction_info.name.is_empty() == false, NameError::EmptyString);
         let auction = &mut ctx.accounts.new_auction;
         auction.auction_info = auction_info.clone();
         auction.bump = ctx.bumps.new_auction;
@@ -40,6 +40,8 @@ pub mod auction {
     pub fn bide(ctx: Context<Bide>, bide_info: BideInfo) -> Result<()> {
         msg!("In bide fn");
         let auction = &mut ctx.accounts.auction;
+        msg!("current auction price = {:?}", auction.bide_info.price);
+        msg!("bideinfo price = {:?}", bide_info.price);
         require!(
             bide_info.price > auction.bide_info.price,
             BideError::PriceTooLow
@@ -112,12 +114,14 @@ pub struct Initialize<'info> {
 #[derive(Accounts)]
 pub struct Bide<'info> {
     pub user: Signer<'info>,
+    #[account(mut)]
     pub auction: Account<'info, Auction>,
 }
 
 #[derive(Accounts)]
 pub struct EndAuction<'info> {
     pub user: Signer<'info>,
+    #[account(mut)]
     pub auction: Account<'info, Auction>,
 }
 

@@ -11,31 +11,30 @@ describe("auction", () => {
   const program: Program<Auction> = anchor.workspace
     .Auction as Program<Auction>;
   const tmpAccount: Keypair = new Keypair();
-  console.log("tmp account pubkey = ", tmpAccount.publicKey.toString());
   const [userAuctionPDA, bump] = PublicKey.findProgramAddressSync(
     [Buffer.from("auction"), tmpAccount.publicKey.toBuffer()],
     program.programId,
   );
-  console.log("userAuctionPDA pubkey = ", userAuctionPDA.toString());
   provider.connection
     .requestAirdrop(tmpAccount.publicKey, 10e9)
     .then(() => console.log(""));
 
-  it("Is initialized!", async () => {
-    const auction_info = {
-      name: "NB",
-      minPrice: new BN(100),
-      idAuction: 42,
-    };
+  it("Create Auction", async () => {
     // Add your test here.
     await program.methods
-      .initialize(auction_info)
+      .initialize({
+        name: "NB",
+        minPrice: new BN(150),
+        idAuction: 42,
+      })
       .accounts({
         user: tmpAccount.publicKey,
         newAuction: userAuctionPDA,
       })
       .signers([tmpAccount])
-      .rpc({ skipPreflight: true });
+      .rpc({
+        skipPreflight: true,
+      });
   });
   it("First bidding", async () => {
     const bide_info = {
@@ -49,22 +48,40 @@ describe("auction", () => {
         auction: userAuctionPDA,
       })
       .signers([tmpAccount])
-      .rpc({ skipPreflight: true });
+      .rpc();
+  });
+  it("Too low bidding", async () => {
+    const bide_info = {
+      price: new BN(50),
+      bidder: tmpAccount.publicKey,
+    };
+    try {
+      await program.methods
+        .bide(bide_info)
+        .accounts({
+          user: tmpAccount.publicKey,
+          auction: userAuctionPDA,
+        })
+        .signers([tmpAccount])
+        .rpc();
+    } catch (e) {
+      //suppose to throw an error
+    }
   });
   it("Second bidding", async () => {
-    const tmpAccount2 = Keypair.generate();
+    const tmpAccount = Keypair.generate();
     const bide_info = {
       price: new BN(150),
-      bidder: tmpAccount2.publicKey,
+      bidder: tmpAccount.publicKey,
     };
     await program.methods
       .bide(bide_info)
       .accounts({
-        user: tmpAccount2.publicKey,
+        user: tmpAccount.publicKey,
         auction: userAuctionPDA,
       })
-      .signers([tmpAccount2])
-      .rpc({ skipPreflight: true });
+      .signers([tmpAccount])
+      .rpc();
   });
   it("third bidding", async () => {
     const bide_info = {
@@ -78,7 +95,7 @@ describe("auction", () => {
         auction: userAuctionPDA,
       })
       .signers([tmpAccount])
-      .rpc({ skipPreflight: true });
+      .rpc();
   });
   it("ending the auction", async () => {
     await program.methods
@@ -96,6 +113,6 @@ describe("auction", () => {
         receiver: tmpAccount.publicKey,
       })
       .signers([tmpAccount])
-      .rpc({ skipPreflight: true });
+      .rpc();
   });
 });

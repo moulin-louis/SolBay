@@ -1,19 +1,19 @@
 [toolchain]
 
 [features]
-seeds = false
+resolution = true
 skip-lint = false
 
 [programs.localnet]
-auction = "8fwi3RtHHKogVd2wwqttrrMSazL9vnkttUikD4CW9y2J"
+auction = "GSEKi5UuUPiQMRWvvpvFHX8fjowv5NkRUcZc9ZMk3w33"
 
 [registry]
-url = "https://api.apr.dev"
+url = "http://127.0.0.1:8899"
 
 [provider]
-cluster = "Devnet"
-wallet = "/mnt/nfs/homes/loumouli/.config/solana/id.json"
+cluster = "Localnet"
+wallet = "~/.config/solana/id.json"
 
 [scripts]
 all = "anchor keys sync && anchor build && anchor deploy && anchor test --skip-deploy --skip-build --skip-local-validator"
-test = "bun run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
+test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
