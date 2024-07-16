@@ -354,6 +354,11 @@
     "@babel/helper-validator-identifier" "^7.22.20"
     to-fast-properties "^2.0.0"
 
+"@barbapapazes/plausible-tracker@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@barbapapazes/plausible-tracker/-/plausible-tracker-0.4.0.tgz#3b3287988a8637d35c59140b6d6ec93664742552"
+  integrity sha512-4hhXK62ORb4feJfjnIILXRnb6xfejHM6yvGCid6MwNdKiQyj6YLW0M779zXLH5IBS4mQObmrNul2HUleeavSKw==
+
 "@capsizecss/metrics@^2.1.1":
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/@capsizecss/metrics/-/metrics-2.2.0.tgz#f8cad1e2911e2e1bb16c2cb69da41be8f5c9b31b"
@@ -2045,6 +2050,15 @@
     eslint-webpack-plugin "^4.0.1"
     pathe "^1.1.0"
     vite-plugin-eslint "^1.8.1"
+
+"@nuxtjs/plausible@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@nuxtjs/plausible/-/plausible-1.0.0.tgz#6fd329358e8827ce370782a6203d7ee68c2ddfb8"
+  integrity sha512-2K0/AbPJAEr3yMA8oDD0I6WB+SXs/YlF297azjR5eSZVQjuimDAwLf4bEXk9ilbrzoMFmm0Tpzn4CC6f0rISBA==
+  dependencies:
+    "@barbapapazes/plausible-tracker" "^0.4.0"
+    "@nuxt/kit" "^3.11.1"
+    defu "^6.1.4"
 
 "@nuxtjs/tailwindcss@^6.12.0":
   version "6.12.0"
