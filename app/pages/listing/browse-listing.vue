@@ -2,7 +2,15 @@
 const {data, refresh, pending, error} = await useFetch('/api/listing/fetch-open', {
   method: 'POST',
 });
-useState<t_listingFilter[]>('listings', () => transformListings(data.value as t_listing[]));
+useState<t_listingFilter[]>('listings', () => {
+  return data.value.map((listing) => {
+    const result: t_listingFilter = {
+      ...listing,
+      filtered: false,
+    };
+    return result;
+  });
+});
 const isOpenFilter = useState<boolean>('isOpenFilter', () => false);
 </script>
 

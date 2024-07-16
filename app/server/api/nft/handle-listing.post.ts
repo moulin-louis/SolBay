@@ -1,7 +1,6 @@
 import {type H3Event} from 'h3';
 import {createUmi} from '@metaplex-foundation/umi-bundle-defaults';
 import {irysUploader} from '@metaplex-foundation/umi-uploader-irys';
-import Irys from '@irys/sdk';
 import {
   createSignerFromKeypair,
   isKeypairSigner,
@@ -10,9 +9,9 @@ import {
   generateSigner,
   percentAmount,
   publicKey,
-  TransactionBuilder,
   type Umi,
   type PublicKey,
+  TransactionBuilder,
 } from '@metaplex-foundation/umi';
 import {
   TokenStandard,
@@ -24,23 +23,23 @@ import {
   delegateStandardV1,
 } from '@metaplex-foundation/mpl-token-metadata';
 import bs58 from 'bs58';
+<<<<<<< HEAD
 // import sharp from 'sharp';
+=======
+import {getImgLink} from '~/composables/getImgLink';
+>>>>>>> parent of 16e3941 (use arwaeve, working implementation user)
 
 export const maxDuration = 120; // This function can run for a maximum of 120 seconds
 
+
 //create NFT SolBay
-const createNFTSB = async (
-  event: H3Event,
-  umi: Umi,
-  listing: t_listing,
-  imageUri: string,
-): Promise<string> => {
+const createNFTSB = async (event: H3Event, umi: Umi, listing: t_listing): Promise<string> => {
   const uri = await umi.uploader.uploadJson({
     name: 'SolBay Listing',
     symbol: 'SBL',
     description: 'NFT tracking your listing :O',
     selleter_fee_basis_points: 0,
-    image: imageUri,
+    image: getImgLink(listing),
     animation_url: '',
     external_url: 'https://sol-bay-gamma.vercel.app/',
     attributes: [
@@ -105,6 +104,7 @@ const updateNFTSB = async (umi: Umi, listing: t_listing, mint: PublicKey): Promi
   console.log('updating done');
 };
 
+<<<<<<< HEAD
 export default defineEventHandler(
   async (
     event: H3Event,
@@ -171,3 +171,31 @@ export default defineEventHandler(
     }
   },
 );
+=======
+export default defineEventHandler(async (event: H3Event) => {
+  try {
+    const body = await readBody(event);
+    const {listing, prevListingAddress} = body;
+    checkMissingParams(body, ['listing']);
+    const config = useRuntimeConfig();
+    const umi = createUmi(config.SOLANA_DEVNET_RPC);
+    const recipient_keypair = umi.eddsa.createKeypairFromSecretKey(
+      Uint8Array.from(bs58.decode(config.RECIPIENT_PRIVATE_KEY)),
+    );
+    const recipient_signer = createSignerFromKeypair(umi, recipient_keypair);
+    if (!isKeypairSigner(recipient_signer)) {
+      throw new Error('invalid recipient signer'); //server error
+    }
+    umi.use(irysUploader());
+    umi.use(mplTokenMetadata());
+    umi.use(signerPayer(recipient_signer));
+    umi.use(signerIdentity(recipient_signer));
+    if (!prevListingAddress) return await createNFTSB(event, umi, listing);
+    await updateNFTSB(umi, listing, publicKey(prevListingAddress));
+    return prevListingAddress;
+  } catch (e) {
+    const error = e as Error;
+    throw new Error('error when updating/creating NFT:' + error.message);
+  }
+});
+>>>>>>> parent of 16e3941 (use arwaeve, working implementation user)

@@ -25,6 +25,7 @@ export default defineNuxtConfig({
       legacyExternals: true,
     },
   },
+<<<<<<< HEAD
 
   experimental: {
     clientNodeCompat: true,
@@ -52,6 +53,10 @@ export default defineNuxtConfig({
     globalAppMiddleware: {
       isEnabled: true,
     },
+=======
+  experimental: {
+    clientNodeCompat: true,
+>>>>>>> parent of 16e3941 (use arwaeve, working implementation user)
   },
   runtimeConfig: {
     PINATA_JWT: process.env.NUXT_PINATA_JWT,

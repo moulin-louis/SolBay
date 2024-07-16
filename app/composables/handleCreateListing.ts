@@ -1,12 +1,34 @@
 import {useWallet} from 'solana-wallets-vue';
 
+interface t_form {
+  file: File | undefined;
+  name: string;
+  description: string;
+  price: number;
+}
+
+const uploadingImage = async (file: File): Promise<string> => {
+  const ImageData = new FormData();
+  ImageData.append('file', file);
+  const ipfs_answer = await $fetch('/api/upload-file-ipfs', {
+    method: 'POST',
+    body: ImageData,
+  });
+  return ipfs_answer;
+};
+
 export const handleCreateListing = async (
   form: t_form,
   selectedToken: t_token | null,
   prevListingAddress: string | null,
+  isLoading: Ref<boolean>,
 ): Promise<string> => {
-  let idRes = '';
   const toast = useToast();
+<<<<<<< HEAD:app/utils/handleCreateListing.ts
+=======
+  const {wallet} = useWallet();
+  isLoading.value = true;
+>>>>>>> parent of 16e3941 (use arwaeve, working implementation user):app/composables/handleCreateListing.ts
   try {
     const {wallet} = useWallet();
     const pub_key = wallet.value?.adapter.publicKey;
@@ -15,21 +37,19 @@ export const handleCreateListing = async (
       name: form.name,
       description: form.description,
       seller: pub_key.toString(),
+      ipfs_hash: '',
+      //if user choose solana token, we set the token info to null
       token: selectedToken?.address === 'SOL' ? null : selectedToken,
       price: form.price,
       buyer: null,
       id: '0',
       created_at: '0',
       nftAddress: '',
-      imageUri: '',
     };
-    const listingData = new FormData();
-    listingData.append('file', form.file, 'listing-image');
-    listingData.append('listing', JSON.stringify(listing));
-    listingData.append('prevListingAddress', prevListingAddress || '');
+    listing.ipfs_hash = await uploadingImage(form.file as File);
     const res = await $fetch('/api/listing/create', {
       method: 'POST',
-      body: listingData,
+      body: {listing, prevListingAddress},
     });
     toast.add({
       id: 'success-notification',
@@ -39,7 +59,7 @@ export const handleCreateListing = async (
       color: 'green',
     });
     console.log('Listing created');
-    idRes = res;
+    return res;
   } catch (e) {
     const error = e as Error;
     toast.add({
@@ -49,7 +69,7 @@ export const handleCreateListing = async (
       icon: '',
       color: 'red',
     });
-    console.log('Error creating listing: ', error.message);
+  } finally {
+    isLoading.value = false;
   }
-  return idRes;
 };
