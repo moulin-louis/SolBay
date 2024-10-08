@@ -23,11 +23,8 @@ import {
   delegateStandardV1,
 } from '@metaplex-foundation/mpl-token-metadata';
 import bs58 from 'bs58';
-<<<<<<< HEAD
 // import sharp from 'sharp';
-=======
 import {getImgLink} from '~/composables/getImgLink';
->>>>>>> parent of 16e3941 (use arwaeve, working implementation user)
 
 export const maxDuration = 120; // This function can run for a maximum of 120 seconds
 
@@ -104,7 +101,6 @@ const updateNFTSB = async (umi: Umi, listing: t_listing, mint: PublicKey): Promi
   console.log('updating done');
 };
 
-<<<<<<< HEAD
 export default defineEventHandler(
   async (
     event: H3Event,
@@ -171,31 +167,3 @@ export default defineEventHandler(
     }
   },
 );
-=======
-export default defineEventHandler(async (event: H3Event) => {
-  try {
-    const body = await readBody(event);
-    const {listing, prevListingAddress} = body;
-    checkMissingParams(body, ['listing']);
-    const config = useRuntimeConfig();
-    const umi = createUmi(config.SOLANA_DEVNET_RPC);
-    const recipient_keypair = umi.eddsa.createKeypairFromSecretKey(
-      Uint8Array.from(bs58.decode(config.RECIPIENT_PRIVATE_KEY)),
-    );
-    const recipient_signer = createSignerFromKeypair(umi, recipient_keypair);
-    if (!isKeypairSigner(recipient_signer)) {
-      throw new Error('invalid recipient signer'); //server error
-    }
-    umi.use(irysUploader());
-    umi.use(mplTokenMetadata());
-    umi.use(signerPayer(recipient_signer));
-    umi.use(signerIdentity(recipient_signer));
-    if (!prevListingAddress) return await createNFTSB(event, umi, listing);
-    await updateNFTSB(umi, listing, publicKey(prevListingAddress));
-    return prevListingAddress;
-  } catch (e) {
-    const error = e as Error;
-    throw new Error('error when updating/creating NFT:' + error.message);
-  }
-});
->>>>>>> parent of 16e3941 (use arwaeve, working implementation user)

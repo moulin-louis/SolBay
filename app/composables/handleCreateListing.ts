@@ -24,11 +24,8 @@ export const handleCreateListing = async (
   isLoading: Ref<boolean>,
 ): Promise<string> => {
   const toast = useToast();
-<<<<<<< HEAD:app/utils/handleCreateListing.ts
-=======
   const {wallet} = useWallet();
   isLoading.value = true;
->>>>>>> parent of 16e3941 (use arwaeve, working implementation user):app/composables/handleCreateListing.ts
   try {
     const {wallet} = useWallet();
     const pub_key = wallet.value?.adapter.publicKey;

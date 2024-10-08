@@ -15,10 +15,7 @@
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
-<<<<<<< HEAD
-=======
     "@coral-xyz/anchor": "^0.29.0",
->>>>>>> parent of 16e3941 (use arwaeve, working implementation user)
     "@metaplex-foundation/mpl-token-metadata": "^3.2.1",
     "@metaplex-foundation/umi": "^0.9.1",
     "@metaplex-foundation/umi-bundle-defaults": "^0.9.1",
@@ -37,27 +34,19 @@
     "bs58": "^5.0.0",
     "buffer": "^6.0.3",
     "date-fns": "^3.6.0",
-<<<<<<< HEAD
     "global": "^4.4.0",
     "h3-formidable": "^1.0.0",
     "jsonwebtoken": "^9.0.2",
     "next-auth": "^4.24.7",
-=======
     "events": "^3.3.0",
     "ioredis": "^5.4.1",
->>>>>>> parent of 16e3941 (use arwaeve, working implementation user)
     "nuxt": "^3.11.2",
     "sharp": "^0.33.3",
     "solana-wallets-vue": "^0.6.1",
     "tweetnacl": "^1.0.3",
     "uuidv4": "^6.2.13",
-<<<<<<< HEAD
     "v-calendar": "3.1.2",
     "vue": "^3.4.27",
-=======
-    "v-calendar": "^3.1.2",
-    "vue": "^3.4.21",
->>>>>>> parent of 16e3941 (use arwaeve, working implementation user)
     "vue-loader": "^17.4.2",
     "vue-router": "^4.3.2",
     "vue-virtual-scroller": "^1.1.2",
@@ -71,7 +60,6 @@
     "@nuxt/types": "^2.17.3",
     "@nuxt/webpack-builder": "^3.11.2",
     "@nuxtjs/eslint-module": "^4.1.0",
-<<<<<<< HEAD
     "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20.12.10",
     "@typescript-eslint/eslint-plugin": "^7.8.0",
@@ -82,29 +70,13 @@
     "eslint-config-standard-with-typescript": "^43.0.1",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-n": "^17.5.1",
-=======
-    "@types/node": "^18",
-    "@typescript-eslint/eslint-plugin": "^6.21.0",
-    "@vue/runtime-core": "^3.4.21",
-    "@vueuse/core": "^10.9.0",
-    "@vueuse/nuxt": "^10.9.0",
-    "eslint": "^8.57.0",
-    "eslint-config-standard-with-typescript": "^43.0.1",
-    "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-n": "^16.6.2",
->>>>>>> parent of 16e3941 (use arwaeve, working implementation user)
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-vue": "^9.25.0",
     "globals": "^15.1.0",
     "lint-staged": "^15.2.2",
     "prettier": "^3.2.5",
     "typescript": "^5.4.5",
-<<<<<<< HEAD
     "typescript-eslint": "^7.8.0",
     "vue-tsc": "^2.0.16"
-=======
-    "typescript-eslint": "^7.6.0",
-    "vue-tsc": "^2.0.13"
->>>>>>> parent of 16e3941 (use arwaeve, working implementation user)
   }
 }
