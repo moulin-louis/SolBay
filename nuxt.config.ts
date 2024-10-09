@@ -1,17 +1,25 @@
+const isProduction = process.env.NODE_ENV === "production";
+
 // import * as process from 'node:process';
 export default defineNuxtConfig({
   ssr: false,
-  modules: ['@nuxt/image', '@nuxt/eslint', '@nuxt/ui', '@nuxt/fonts', '@vueuse/nuxt'],
+  modules: [
+    ...(isProduction ? [] : ["@nuxt/eslint"]),
+    "@nuxt/image",
+    "@nuxt/ui",
+    "@nuxt/fonts",
+    "@vueuse/nuxt",
+  ],
   nitro: {
     storage: {
       db: {
-        driver: 'vercelKV',
+        driver: "vercelKV",
       },
     },
     devStorage: {
       db: {
-        driver: 'fs',
-        base: './data/db',
+        driver: "fs",
+        base: "./data/db",
       },
     },
     experimental: {
@@ -25,12 +33,12 @@ export default defineNuxtConfig({
   vite: {
     build: {
       rollupOptions: {
-        external: ['sharp'],
+        external: ["sharp"],
       },
     },
   },
   app: {
-    pageTransition: {name: 'page', mode: 'out-in'},
+    pageTransition: { name: "page", mode: "out-in" },
   },
   runtimeConfig: {
     PINATA_JWT: process.env.NUXT_PINATA_JWT,
